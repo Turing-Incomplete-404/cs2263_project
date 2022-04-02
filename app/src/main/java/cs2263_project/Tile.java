@@ -1,7 +1,7 @@
 package cs2263_project;
 
 /**
- * Holds information about the
+ * Holds information about the tiles that are held and played
  * @author Tyson Cox
  */
 class Tile {
