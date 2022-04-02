@@ -13,8 +13,8 @@ class TileDeque {
 
     TileDeque() {
         tiles = new ArrayList<>();
-        for(int x = 0; x < 12; x++) {
-            for (int y = 0; y < 9; y++) {
+        for(int x = 0; x < GameBoard.WIDTH; x++) {
+            for (int y = 0; y < GameBoard.HEIGHT; y++) {
                 tiles.add(new Tile(x, y));
             }
         }
