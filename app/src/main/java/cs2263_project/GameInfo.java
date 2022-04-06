@@ -1,7 +1,8 @@
 package cs2263_project;
 
 /**
- * 
+ * This class stores the information on the different corporations, the
+ * primary and secondary bonuses, and the costs, per size
  * @author Eric Hill
  */
 class GameInfo {
@@ -22,9 +23,9 @@ class GameInfo {
     }
 
     /**
-     *
+     * This method gets the size bracket for a set size of corporation (number of tiles)
      * @param size
-     * @return
+     * @return bracket
      */
     private int getBracket(int size){
         for (int i = 0; i <= 8; i++){
@@ -34,9 +35,10 @@ class GameInfo {
     }
 
     /**
-     *
+     * This class just gets the index of the corporation within Corporations,
+     * which is used in getting the "tier" of the corporation
      * @param stock
-     * @return
+     * @return int - index
      */
     private int getStockIndex(String stock){
         for (int i = 0; i < Corporations.length; i++){
@@ -46,7 +48,7 @@ class GameInfo {
     }
 
     /**
-     *
+     * This method uses the private data to find the primary bonuses of a given stock and size
      * @param stock The name of the stock to get the value of
      * @param size The number of tiles the stock has on the board
      * @return The current bonus for the secondary stock holder
@@ -61,7 +63,7 @@ class GameInfo {
     }
 
     /**
-     *
+     * This method uses the private data to find the secondary bonuses of a given stock and size
      * @param stock The name of the stock to get the value of
      * @param size The number of tiles the stock has on the board
      * @return The current bonus to be paid to the primary stock holder
@@ -76,7 +78,7 @@ class GameInfo {
     }
 
     /**
-     *
+     * This method uses the private data to find the cost of a given stock and size
      * @param stock The name of the stock to get the value of
      * @param size The number of tiles the stock has on the board
      * @return The current value of the stock
