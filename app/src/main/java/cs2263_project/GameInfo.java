@@ -1,5 +1,9 @@
 package cs2263_project;
 
+/**
+ * 
+ * @author Eric Hill
+ */
 class GameInfo {
     private int[] corpTiers = {1,1,2,2,2,3,3};
     public String[] Corporations = {"Lux","Imperial","Tower","Eagle", "FINISH THIS LATER", "exc."};
@@ -17,6 +21,11 @@ class GameInfo {
     public GameInfo(){
     }
 
+    /**
+     *
+     * @param size
+     * @return
+     */
     private int getBracket(int size){
         for (int i = 0; i <= 8; i++){
             if (size < Brackets[i]){ return i; }
@@ -24,6 +33,11 @@ class GameInfo {
         return 9;
     }
 
+    /**
+     *
+     * @param stock
+     * @return
+     */
     private int getStockIndex(String stock){
         for (int i = 0; i < Corporations.length; i++){
             if (stock.equals(Corporations[i]))return i;
@@ -31,7 +45,13 @@ class GameInfo {
         return -1;
     }
 
-    public int getPBonus(String stock, int size){
+    /**
+     *
+     * @param stock The name of the stock to get the value of
+     * @param size The number of tiles the stock has on the board
+     * @return The current bonus for the secondary stock holder
+     */
+    public int getPrimaryBonus(String stock, int size){
         int bracket = getBracket(size);
         int index = getStockIndex(stock);
         if (corpTiers[index] == 1)return tier1Pbonus[bracket];
@@ -40,7 +60,13 @@ class GameInfo {
         return -1;
     }
 
-    public int getSBonus(String stock, int size){
+    /**
+     *
+     * @param stock The name of the stock to get the value of
+     * @param size The number of tiles the stock has on the board
+     * @return The current bonus to be paid to the primary stock holder
+     */
+    public int getSecondaryBonus(String stock, int size){
         int bracket = getBracket(size);
         int index = getStockIndex(stock);
         if (corpTiers[index] == 1){return tier1Sbonus[bracket];}
@@ -49,6 +75,12 @@ class GameInfo {
         return -1;
     }
 
+    /**
+     *
+     * @param stock The name of the stock to get the value of
+     * @param size The number of tiles the stock has on the board
+     * @return The current value of the stock
+     */
     public int getCost(String stock, int size){
         int bracket = getBracket(size);
         int index = getStockIndex(stock);
