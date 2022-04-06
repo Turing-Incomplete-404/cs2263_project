@@ -5,18 +5,18 @@ package cs2263_project;
  * @author Eric Hill
  */
 class GameInfo {
-    private int[] corpTiers = {1,1,2,2,2,3,3};
-    public String[] Corporations = {"Lux","Imperial","Tower","Eagle", "FINISH THIS LATER", "exc."};
-    private int[] Brackets = {2,3,4,5,6,11,21,31,41};
-    private int[] tier1Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier1Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier1Cost = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Cost = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Cost = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] corpTiers = {1,1,2,2,2,3,3};
+    public static String[] Corporations = {"Lux","Imperial","Tower","Eagle", "FINISH THIS LATER", "exc."};
+    private static int[] Brackets = {2,3,4,5,6,11,21,31,41};
+    private static int[] tier1Pbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier2Pbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier3Pbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier1Sbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier2Sbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier3Sbonus = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier1Cost = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier2Cost = {0,1,2,3,4,5,6,7,8,9};
+    private static int[] tier3Cost = {0,1,2,3,4,5,6,7,8,9};
 
     public GameInfo(){
     }

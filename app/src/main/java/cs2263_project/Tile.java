@@ -12,11 +12,20 @@ class Tile {
     Tile(int x, int y) {
         X = x;
         Y = y;
+        corporation = null;
     }
 
     public String getTileName() {
         char letter = 'A';
         letter += Y;
         return Integer.toString(X + 1) + letter;
+    }
+
+    public int getX() { return X; }
+    public int getY() { return Y; }
+
+    public String getCorporation() { return corporation; }
+    public void setCorporation(String corp) {
+        corporation = corp;
     }
 }
