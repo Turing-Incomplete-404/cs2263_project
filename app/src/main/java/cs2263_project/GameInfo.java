@@ -7,7 +7,7 @@ package cs2263_project;
  */
 class GameInfo {
     private int[] corpTiers = {1,1,2,2,2,3,3};
-    public String[] Corporations = {"Lux","Imperial","Tower","Eagle", "FINISH THIS LATER", "exc."};
+    public String[] Corporations = {"Sackson","Zeta","Hydra","Fusion", "America", "Phoenix","Quantum"};
     private int[] Brackets = {2,3,4,5,6,11,21,31,41};
     private int[] tier1Pbonus = {0,1,2,3,4,5,6,7,8,9};
     private int[] tier2Pbonus = {0,1,2,3,4,5,6,7,8,9};
@@ -15,9 +15,9 @@ class GameInfo {
     private int[] tier1Sbonus = {0,1,2,3,4,5,6,7,8,9};
     private int[] tier2Sbonus = {0,1,2,3,4,5,6,7,8,9};
     private int[] tier3Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier1Cost = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Cost = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Cost = {0,1,2,3,4,5,6,7,8,9};
+    private int[] tier1Cost = {0,200,300,400,500,600,700,800,900,1000};
+    private int[] tier2Cost = {0,300,400,500,600,700,800,900,1000,1100};
+    private int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
 
     public GameInfo(){
     }
