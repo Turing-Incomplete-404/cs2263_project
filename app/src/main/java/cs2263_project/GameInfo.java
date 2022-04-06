@@ -6,12 +6,12 @@ package cs2263_project;
  * @author Eric Hill
  */
 class GameInfo {
-    private int[] corpTiers = {1,1,2,2,2,3,3};
-    public String[] Corporations = {"Sackson","Zeta","Hydra","Fusion", "America", "Phoenix","Quantum"};
-    private int[] Brackets = {2,3,4,5,6,11,21,31,41};
-    private int[] tier1Cost = {0,200,300,400,500,600,700,800,900,1000};
-    private int[] tier2Cost = {0,300,400,500,600,700,800,900,1000,1100};
-    private int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
+    private static int[] corpTiers = {1,1,2,2,2,3,3};
+    public static String[] Corporations = {"Sackson","Zeta","Hydra","Fusion", "America", "Phoenix","Quantum"};
+    private static int[] Brackets = {2,3,4,5,6,11,21,31,41};
+    private static int[] tier1Cost = {0,200,300,400,500,600,700,800,900,1000};
+    private static int[] tier2Cost = {0,300,400,500,600,700,800,900,1000,1100};
+    private static int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
 
     public GameInfo(){
     }
