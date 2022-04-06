@@ -9,12 +9,6 @@ class GameInfo {
     private int[] corpTiers = {1,1,2,2,2,3,3};
     public String[] Corporations = {"Sackson","Zeta","Hydra","Fusion", "America", "Phoenix","Quantum"};
     private int[] Brackets = {2,3,4,5,6,11,21,31,41};
-    private int[] tier1Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Pbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier1Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier2Sbonus = {0,1,2,3,4,5,6,7,8,9};
-    private int[] tier3Sbonus = {0,1,2,3,4,5,6,7,8,9};
     private int[] tier1Cost = {0,200,300,400,500,600,700,800,900,1000};
     private int[] tier2Cost = {0,300,400,500,600,700,800,900,1000,1100};
     private int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
@@ -56,9 +50,9 @@ class GameInfo {
     public int getPrimaryBonus(String stock, int size){
         int bracket = getBracket(size);
         int index = getStockIndex(stock);
-        if (corpTiers[index] == 1)return tier1Pbonus[bracket];
-        if (corpTiers[index] == 2)return tier2Pbonus[bracket];
-        if (corpTiers[index] == 3)return tier3Pbonus[bracket];
+        if (corpTiers[index] == 1){return tier1Cost[bracket]*10;}
+        if (corpTiers[index] == 2){return tier2Cost[bracket]*10;}
+        if (corpTiers[index] == 3){return tier3Cost[bracket]*10;}
         return -1;
     }
 
@@ -71,9 +65,9 @@ class GameInfo {
     public int getSecondaryBonus(String stock, int size){
         int bracket = getBracket(size);
         int index = getStockIndex(stock);
-        if (corpTiers[index] == 1){return tier1Sbonus[bracket];}
-        if (corpTiers[index] == 2){return tier2Sbonus[bracket];}
-        if (corpTiers[index] == 3){return tier3Sbonus[bracket];}
+        if (corpTiers[index] == 1){return tier1Cost[bracket]*5;}
+        if (corpTiers[index] == 2){return tier2Cost[bracket]*5;}
+        if (corpTiers[index] == 3){return tier3Cost[bracket]*5;}
         return -1;
     }
 
