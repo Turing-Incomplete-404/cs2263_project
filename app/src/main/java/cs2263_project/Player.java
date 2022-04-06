@@ -13,6 +13,8 @@ class Player {
     private TreeMap stocks = new TreeMap<String,Integer>();
     private LinkedList hand = new LinkedList<Tile>();
 
+    public Player(){}
+
     public Player(String n, String[] corporations){
         name = n;
         for (var corp:corporations){
