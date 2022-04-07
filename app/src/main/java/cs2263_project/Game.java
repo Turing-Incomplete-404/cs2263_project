@@ -1,7 +1,9 @@
 package cs2263_project;
 
 import lombok.NonNull;
+import lombok.Getter;
 
+import javax.naming.InsufficientResourcesException;
 import java.util.List;
 
 /**
@@ -92,7 +94,13 @@ class Game {
     }
 
     public boolean buyStock(@NonNull String stock) {
-
+        int price = gameInfo.getCost(stock,board.countCorporation(stock));
+        if (players[activePlayer].getdollars() < price){
+            throw new RuntimeException("Insufficient money to make purchase");
+        }
+        players[activePlayer].addStock(stock,1);
+        players[activePlayer].subtractDollars(price);
+        return true;
     }
 
     public boolean isTilePlaceable(@NonNull Tile tile) {
@@ -104,7 +112,9 @@ class Game {
     }
 
     public void sellStock(@NonNull String stock) {
-
+        int price = gameInfo.getCost(stock,board.countCorporation(stock));
+        players[activePlayer].subtractStocks(stock,1);
+        players[activePlayer].addDollars(price);
     }
 
     public void tradeStock(@NonNull String string) {

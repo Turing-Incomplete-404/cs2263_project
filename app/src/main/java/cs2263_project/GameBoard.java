@@ -133,7 +133,7 @@ class GameBoard {
      * @param name The name of the corporation to count
      * @return The number of tiles the corporation has on the board
      */
-    int countCorporation(@NonNull String name) {
+    public int countCorporation(@NonNull String name) {
         int count = 0;
 
         for(int x = 0; x < WIDTH; x++) {
