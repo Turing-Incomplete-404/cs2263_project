@@ -12,6 +12,7 @@ class GameInfo {
     private static int[] tier1Cost = {0,200,300,400,500,600,700,800,900,1000};
     private static int[] tier2Cost = {0,300,400,500,600,700,800,900,1000,1100};
     private static int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
+    public static final int STARTING_STOCKS = 25;
 
     public GameInfo(){
     }
