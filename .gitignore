@@ -30,3 +30,6 @@ build
 
 # Ignore jetbrains ides
 .idea
+
+# Ignore eclipese ides
+.project

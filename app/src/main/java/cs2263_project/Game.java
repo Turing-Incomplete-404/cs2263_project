@@ -12,7 +12,7 @@ import java.util.List;
  * @author Tyson Cox
  * @author Eric Hill
  */
-class Game {
+public class Game {
     private Player[] players;
     private TileDeque tileDeque;
     private GameBoard board;

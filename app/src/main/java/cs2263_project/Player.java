@@ -11,7 +11,7 @@ import java.util.TreeMap;
  * This class stores the data and holds the interactive methods for each player
  * @author Eric Hill
  */
-class Player {
+public class Player {
     @Getter private String name;
     @Getter private Integer dollars = 0;
     private TreeMap stocks = new TreeMap<String,Integer>();

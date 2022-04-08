@@ -10,7 +10,7 @@ import static java.lang.Math.min;
  * collection of behaviours related to managing game board state
  * @author Tyson Cox
  */
-class GameBoard {
+public class GameBoard {
     public static final int WIDTH = 12;
     public static final int HEIGHT = 9;
 
