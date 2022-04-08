@@ -1,14 +1,15 @@
 package cs2263_project;
 
+import com.google.gson.Gson;
 import lombok.NonNull;
-import lombok.Getter;
 
-import javax.naming.InsufficientResourcesException;
+import java.io.*;
 import java.util.List;
 
 /**
  *
  * @author Tyson Cox
+ * @author Eric Hill
  */
 class Game {
     private Player[] players;
@@ -90,12 +91,13 @@ class Game {
         if (!board.isTilePlaceable(tile))
             return false;
 
-
+        board.placeTile(tile);
+        return true;
     }
 
     public boolean buyStock(@NonNull String stock) {
         int price = gameInfo.getCost(stock,board.countCorporation(stock));
-        if (players[activePlayer].getdollars() < price){
+        if (players[activePlayer].getDollars() < price){
             throw new RuntimeException("Insufficient money to make purchase");
         }
         players[activePlayer].addStock(stock,1);
@@ -121,12 +123,62 @@ class Game {
 
     }
 
-    public void save(@NonNull String path) {
-
+    private static class GameState {
+        Player[] players;
+        TileDeque tileDeque;
+        GameBoard board;
+        StockList stockList;
+        GameInfo gameInfo;
+        int turnPlayer;
+        int activePlayer;
     }
 
-    public void load(@NonNull String path) {
+    /**
+     * Save the current game state to a file
+     * @param path the path to write the saved state file to
+     */
+    public void save(@NonNull String path) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            GameState state = new GameState();
 
+            state.players = players;
+            state.tileDeque = tileDeque;
+            state.board = board;
+            state.stockList = stockList;
+            state.gameInfo = gameInfo;
+            state.turnPlayer = turnPlayer;
+            state.activePlayer = activePlayer;
+            new Gson().toJson(state, writer);
+        }
+        catch (IOException ex) {
+            throw new RuntimeException("Unable to serialize file with reason: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Load the game state from a file
+      * @param path The path to the file containing the game state to load
+     */
+    public void load(@NonNull String path) {
+        try {
+            FileReader reader = new FileReader(path);
+            GameState state = new Gson().fromJson(reader, GameState.class);
+
+            players = state.players;
+            tileDeque = state.tileDeque;
+            board = state.board;
+            stockList = state.stockList;
+            gameInfo = state.gameInfo;
+            turnPlayer = state.turnPlayer;
+            activePlayer = state.activePlayer;
+
+            if (observer != null)
+                observer.notifyChangeTurn(players[turnPlayer]);
+        }
+        catch (FileNotFoundException ex) {
+            throw new RuntimeException("Can't find save game file to load");
+        }
     }
 
     public void registerObserver(@NonNull GameObserver observer) {
