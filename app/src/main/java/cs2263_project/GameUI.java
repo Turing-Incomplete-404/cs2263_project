@@ -5,7 +5,7 @@ import java.util.Map;
 class GameUI implements GameObserver {
 
     @Override
-    public void notifyChangTurn(Player player) {
+    public void notifyChangeTurn(Player player) {
 
     }
 

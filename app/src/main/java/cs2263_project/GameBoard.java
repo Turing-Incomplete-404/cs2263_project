@@ -1,6 +1,233 @@
 package cs2263_project;
 
+import lombok.NonNull;
+import java.util.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+/**
+ * Holds the Tiles the players have played, as well as a
+ * collection of behaviours related to managing game board state
+ * @author Tyson Cox
+ */
 class GameBoard {
     public static final int WIDTH = 12;
     public static final int HEIGHT = 9;
+
+    private static final int CORPORATION_SAFE_SIZE = 11;
+
+    private final Tile[][] board;
+    private int currentCorporationCount;
+
+    public GameBoard() {
+        board = new Tile[WIDTH][HEIGHT];
+        currentCorporationCount = 0;
+
+        for(int x = 0; x < WIDTH; x++)
+            for(int y = 0; y < HEIGHT; y++)
+                board[x][y] = null;
+    }
+
+    /**
+     * Get all immediately adjacent tiles to a given tile
+     * @param tile The tile to start from
+     * @return The list of immediately adjacent tiles
+     */
+    private List<Tile> getNeighbors(@NonNull Tile tile) {
+        int x = tile.getX();
+        int y = tile.getY();
+
+        List<Tile> neighbors = new ArrayList<>();
+
+        x = max(0, x - 1);
+        if (board[x][y] != null)
+            neighbors.add(board[x][y]);
+
+        x = tile.getX();
+        y = min(HEIGHT, y + 1);
+        if (board[x][y] != null)
+            neighbors.add(board[x][y]);
+
+        y = tile.getY();
+        x = min(WIDTH, x + 1);
+        if (board[x][y] != null)
+            neighbors.add(board[x][y]);
+
+        x = tile.getX();
+        y = max(0, y - 1);
+        if (board[x][y] != null)
+            neighbors.add(board[x][y]);
+
+        return neighbors;
+    }
+
+    /**
+     * Recurses through adjacent tiles
+     * @param tiles The collection to add neighbors to
+     * @param tile The tile to add and check neighbors from
+     */
+    private void recurseTile(Set<Tile> tiles, Tile tile) {
+        tiles.add(tile);
+
+        List<Tile> neighbors = getNeighbors(tile);
+        for(Tile t : neighbors) {
+            if (!tiles.contains(t)) {
+                recurseTile(tiles, t);
+            }
+        }
+    }
+
+    /**
+     * Returns a set containing a given tile and all recursively adjacent tiles
+     * @param tile The tile to start the chain from
+     * @return The collection of adjacent tiles (chain)
+     */
+    private Set<Tile> getWholeChain(@NonNull Tile tile) {
+        Set<Tile> tiles = new HashSet<>();
+        recurseTile(tiles, tile);
+        return tiles;
+    }
+
+    /**
+     * Places the tile in the board
+     * @param tile the tile to place
+     */
+    void placeTile(@NonNull Tile tile) {
+        if (isTilePlaceable(tile)) {
+
+            if (wouldTriggerFormation(tile)) {
+                currentCorporationCount++;
+                List<Tile> neighbors = getNeighbors(tile);
+
+                for(Tile neighbor : neighbors) {
+                    Set<Tile> chain = getWholeChain(neighbor);
+
+                    for(Tile corpTile : chain) {
+                        corpTile.setCorporation(tile.getCorporation());
+                    }
+                }
+
+                board[tile.getX()][tile.getY()] = tile;
+            } else if (wouldTriggerMerge(tile)) {
+                currentCorporationCount--;
+                List<Tile> neighbors = getNeighbors(tile);
+
+                for(Tile neighbor : neighbors) {
+                    Set<Tile> chain = getWholeChain(neighbor);
+
+                    for(Tile corpTile : chain) {
+                        corpTile.setCorporation(tile.getCorporation());
+                    }
+                }
+
+                board[tile.getX()][tile.getY()] = tile;
+            }
+            else {
+                board[tile.getX()][tile.getY()] = tile;
+            }
+        }
+    }
+
+    /**
+     * Gets the number of tiles that a corporation has on the board
+     * @param name The name of the corporation to count
+     * @return The number of tiles the corporation has on the board
+     */
+    int countCorporation(@NonNull String name) {
+        int count = 0;
+
+        for(int x = 0; x < WIDTH; x++) {
+            for(int y = 0; y < HEIGHT; y++) {
+                if (board[x][y] != null && board[x][y].getCorporation() != null) {
+                    if (board[x][y].getCorporation().equals(name)) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Returns whether a tile is currently placeable
+     * @param tile The tile to check
+     * @return whether the tile is placeable
+     */
+    boolean isTilePlaceable(@NonNull Tile tile) {
+        return !isTileUnplayable(tile) && currentCorporationCount < GameInfo.Corporations.length;
+    }
+
+    /**
+     * Returns whether the tile can ever be played
+     * @param tile the tile to check
+     * @return whether the tile can never be played
+     */
+    boolean isTileUnplayable(@NonNull Tile tile) {
+        List<Tile> neighbors = getNeighbors(tile);
+
+        if (neighbors.size() >= 2) {
+            Set<String> corpnames = new HashSet<>();
+            for(Tile t : neighbors)
+                if (t.getCorporation() != null)
+                    corpnames.add(t.getCorporation());
+
+            if (corpnames.size() > 1) {
+                int safeCorps = 0;
+
+                for(String corp : corpnames)
+                    if (countCorporation(corp) >= CORPORATION_SAFE_SIZE)
+                        safeCorps++;
+
+                return safeCorps > 1;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether the tile would cause a merge between two corporations
+     * @param tile The tile to check
+     * @return Whether the tile would cause a merge
+     */
+    boolean wouldTriggerMerge(@NonNull Tile tile) {
+        List<Tile> neighbors = getNeighbors(tile);
+        if (neighbors.size() >= 2) {
+            Set<String> corpnames = new HashSet<>();
+
+            for(Tile t : neighbors)
+                if (t.getCorporation() != null)
+                    corpnames.add(t.getCorporation());
+
+            int safeCorps = 0;
+            for(String s : corpnames)
+                if (countCorporation(s) >= CORPORATION_SAFE_SIZE)
+                    safeCorps++;
+
+            return safeCorps < 2;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether the tile would form a corporation when placed
+     * @param tile The tile to check
+     * @return Whether the tile would cause a corporation formation
+     */
+    boolean wouldTriggerFormation(@NonNull Tile tile) {
+        List<Tile> neighbors = getNeighbors(tile);
+        if (neighbors.size() >= 1) {
+            for(Tile t : neighbors) {
+                if (t.getCorporation() != null) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

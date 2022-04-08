@@ -3,7 +3,7 @@ package cs2263_project;
 import java.util.Map;
 
 interface GameObserver {
-    void notifyChangTurn(Player player);
+    void notifyChangeTurn(Player player);
     void notifyStockDecision(Player player, String fromCorp, String toCorp);
     void notifyMergeDecision(String option1, String option2);
     void notifyGameEnd(String[] names, Integer[] dollars);
