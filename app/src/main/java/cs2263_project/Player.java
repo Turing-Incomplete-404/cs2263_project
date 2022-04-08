@@ -75,4 +75,13 @@ class Player {
     public void subtractStocks(String stock, Integer value){
         stocks.put(stock,(int)(stocks.get(stock))-value);
     }
+
+    /**
+     * Get the number of stocks a player has
+     * @param stock The stock to check
+     * @return The number of stocks the player has
+     */
+    public int stockAmount(String stock) {
+        return (Integer)stocks.get(stock);
+    }
 }

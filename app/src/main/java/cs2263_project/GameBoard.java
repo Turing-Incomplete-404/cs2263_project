@@ -230,4 +230,41 @@ class GameBoard {
 
         return false;
     }
+
+    /**
+     * Returns a list containing all currently formed corporations
+     * @return A list containing all currently formed corporations
+     */
+    public List<String> getCurrentCorporationList() {
+        Set<String> corps = new HashSet<>();
+
+        for(int x = 0; x < WIDTH; x++) {
+            for(int y = 0; y < HEIGHT; y++) {
+                if (board[x][y] != null && board[x][y].getCorporation() != null) {
+                    corps.add(board[x][y].getCorporation());
+                }
+            }
+        }
+
+        return corps.stream().toList();
+    }
+
+    /**
+     * Returns a list of the two corporations that would be merged by placing the tile
+     * @param tile The tile to place
+     * @return The two corporations that would be merged, empty otherwise
+     */
+    public List<String> getMergeOptions(Tile tile) {
+        Set<String> corps = new HashSet<>();
+        List<Tile> neighbors = getNeighbors(tile);
+
+        for(Tile t : neighbors)
+            if(t.getCorporation() != null)
+                corps.add(t.getCorporation());
+
+        if (corps.size() < 2)
+            return new ArrayList<String>();
+        else
+            return corps.stream().toList();
+    }
 }

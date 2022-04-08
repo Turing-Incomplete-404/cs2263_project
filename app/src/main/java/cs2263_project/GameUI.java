@@ -5,7 +5,7 @@ import java.util.Map;
 class GameUI implements GameObserver {
 
     @Override
-    public void notifyChangeTurn(Player player) {
+    public void notifyPlayerUpdate(Player player) {
 
     }
 
@@ -15,7 +15,7 @@ class GameUI implements GameObserver {
     }
 
     @Override
-    public void notifyMergeDecision(String option1, String option2) {
+    public void notifyMergeDecision(String option1, String option2, Tile tile) {
 
     }
 
@@ -26,6 +26,11 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyChangeStocks(Map<String, Integer> param) {
+
+    }
+
+    @Override
+    public void notifyFormOption(String[] options, Tile tile) {
 
     }
 }
