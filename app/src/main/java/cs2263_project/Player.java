@@ -1,5 +1,9 @@
 package cs2263_project;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -8,8 +12,8 @@ import java.util.TreeMap;
  * @author Eric Hill
  */
 class Player {
-    private String name;
-    private Integer dollars = 0;
+    @Getter private String name;
+    @Getter private Integer dollars = 0;
     private TreeMap stocks = new TreeMap<String,Integer>();
     private LinkedList hand = new LinkedList<Tile>();
 
@@ -70,5 +74,14 @@ class Player {
      */
     public void subtractStocks(String stock, Integer value){
         stocks.put(stock,(int)(stocks.get(stock))-value);
+    }
+
+    /**
+     * Get the number of stocks a player has
+     * @param stock The stock to check
+     * @return The number of stocks the player has
+     */
+    public int stockAmount(String stock) {
+        return (Integer)stocks.get(stock);
     }
 }
