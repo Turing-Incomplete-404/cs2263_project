@@ -13,7 +13,7 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
-    
+    id 'org.openjfx.javafxplugin' version '0.0.12'
     id 'jacoco'
     id "com.github.hierynomus.license-base" version "0.16.1"
     id "io.freefair.lombok" version "6.4.1"
@@ -41,6 +41,10 @@ javadoc {
     source = sourceSets.main.allJava
     classpath = configurations.runtimeClasspath
     destinationDir = file('../docs/javadoc')
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 license {
