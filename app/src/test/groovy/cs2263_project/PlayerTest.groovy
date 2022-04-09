@@ -44,7 +44,6 @@ class PlayerTest extends Specification {
         player.stockAmount(corporation) != -1
     }
 
-    /*
     def "check removing tile from hand"(){
         given:
         Tile tile1 = new Tile(1,1)
@@ -60,8 +59,6 @@ class PlayerTest extends Specification {
         player.removeTile(tile2)
 
         then:
-        int i = 0;
-        if (player.hand[0].equals(tile1) && player.hand[1].equals(tile3) && player.hand[2].equals(tile4)){return true;}
+        player.hand[0].equals(tile1) && player.hand[1].equals(tile3) && player.hand[2].equals(tile4)
     }
-     */
 }

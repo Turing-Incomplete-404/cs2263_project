@@ -44,12 +44,12 @@ public class GameBoard {
             neighbors.add(board[x][y]);
 
         x = tile.getX();
-        y = min(HEIGHT, y + 1);
+        y = min(HEIGHT - 1, y + 1);
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
         y = tile.getY();
-        x = min(WIDTH, x + 1);
+        x = min(WIDTH - 1, x + 1);
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
