@@ -4,9 +4,12 @@ import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+
 import java.util.*;
 
 class GameUI implements GameObserver {
+    private final Game game;
+
     private BorderPane root;
 
     private BorderPane mainGameRoot;
@@ -16,12 +19,12 @@ class GameUI implements GameObserver {
     private Label lblPlayerMoney;
     private GridPane grdTiles;
     private GridPane grdPlayerHand;
+    private GridPane grdPlayerHandAction;
     private Label[][] tileGrid;
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
 
-    private BorderPane stockChooserRoot;
-
+    private int gamePhase;
 
     /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
@@ -45,8 +48,25 @@ class GameUI implements GameObserver {
      * GameStatusHeader - header about game status
      * CorporationKeyColor(corp name) - the corporation color key block
      * FilledTile(corp name) - a Tile of the board filled with a given corporation
+     * ButtonTile - buttons that place the tiles
+     * PaneBoard, PaneTitle, PanePlayer, PaneStocks, PaneAction - the background panes
      */
     static {
+        borderThickness.put("PaneBoard", "15 15 15 15");
+        borderColors.put(   "PaneBoard", "#000000");
+
+        borderThickness.put("PaneTitle", "15 15 15 15");
+        borderColors.put(   "PaneTitle", "#000000");
+
+        borderThickness.put("PanePlayer", "15 15 15 15");
+        borderColors.put(   "PanePlayer", "#000000");
+
+        borderThickness.put("PaneStocks", "15 15 15 15");
+        borderColors.put(   "PaneStocks", "#000000");
+
+        borderThickness.put("PaneAction", "15 15 15 15");
+        borderColors.put(   "PaneAction", "#000000");
+
         fillColors.put(     "EmptyTile", "#F1F1F1");
         borderColors.put(   "EmptyTile", "#000000");
         borderThickness.put("EmptyTile", "5 5 5 5");
@@ -87,14 +107,25 @@ class GameUI implements GameObserver {
     }
 
     public GameUI() {
+        game = Game.getInstance();
         root = new BorderPane();
         constructGameRoot();
-        constructStockChoice();
+        gamePhase = 1;
         updateScene(mainGameRoot);
     }
 
     public BorderPane getRoot() {
         return root;
+    }
+
+    void debug() {
+        Game game = Game.getInstance();
+        Tile A1 = new Tile(0, 0);
+        Tile B1 = new Tile(0, 1);
+        Tile B2 = new Tile(1, 1);
+        game.placeTile(A1);
+        game.placeTile(B1);
+        game.placeTile(B2);
     }
 
     /**
@@ -114,6 +145,7 @@ class GameUI implements GameObserver {
         if (fonts.containsKey(category))
             result += String.format("-fx-font: %s;", fonts.get(category));
 
+
         return result;
     }
 
@@ -131,12 +163,9 @@ class GameUI implements GameObserver {
         mainGameRoot.setBottom(addGameBottom());
     }
 
-    private void constructStockChoice() {
-        stockChooserRoot = new BorderPane();
-    }
-
     private HBox addGameTop() {
         HBox topbox = new HBox(50);
+        topbox.setStyle(getStyle("PaneTitle"));
         topbox.setPadding(new Insets(PANEL_SPACING));
         HBox lefttopbox = new HBox();
         HBox centertopbox = new HBox();
@@ -149,6 +178,7 @@ class GameUI implements GameObserver {
 
         Button menu = new Button();
         menu.setText("Menu");
+        menu.setOnAction(e -> debug());
 
         lefttopbox.getChildren().add(lblPlayerTurn);
         centertopbox.getChildren().add(lblGamePhase);
@@ -161,8 +191,8 @@ class GameUI implements GameObserver {
 
     private GridPane addGameCenter() {
         grdTiles = new GridPane();
+        grdTiles.setStyle(getStyle("PaneBoard"));
         grdTiles.setPadding(new Insets(PANEL_SPACING));
-        grdTiles.setStyle(getStyle("GridGameBoard"));
         tileGrid = new Label[GameBoard.WIDTH][GameBoard.HEIGHT];
         grdTiles.setHgap(BOARD_TILE_SPACING);
         grdTiles.setVgap(BOARD_TILE_SPACING);
@@ -201,8 +231,31 @@ class GameUI implements GameObserver {
         }
     }
 
+    private void addHandTileButtons(GridPane pane, Player player) {
+        pane.getChildren().removeIf(child -> child.getClass() == Button.class);
+        List<Tile> tiles = player.getTiles();
+
+        for(int i = 0; i < tiles.size(); i++) {
+            Button btn = new Button(tiles.get(i).getTileName());
+            btn.setPrefSize(TILE_WIDTH * 1.5, TILE_HEIGHT * 1.5);
+            btn.setAlignment(Pos.CENTER);
+            btn.setStyle(getStyle("ButtonTile"));
+            pane.add(btn, i % 3, (i / 3));
+
+            int finalI = i;
+            btn.setOnAction(e -> {
+                Tile tile = tiles.get(finalI);
+                if (game.placeTile(tile)) {
+                    pane.getChildren().removeIf(child -> child.getClass() == Button.class && tile.getTileName().equals(((Button)child).getText()));
+                    player.removeTile(tile);
+                }
+            });
+        }
+    }
+
     private VBox addGameLeft() {
         VBox box = new VBox();
+        box.setStyle(getStyle("PanePlayer"));
         box.setPadding(new Insets(PANEL_SPACING));
         lblPlayerStocks = new HashMap<>();
 
@@ -237,6 +290,7 @@ class GameUI implements GameObserver {
 
     private VBox addGameRight() {
         VBox box = new VBox();
+        box.setStyle(getStyle("PaneStocks"));
         box.setPadding(new Insets(PANEL_SPACING));
         box.setSpacing(10);
         lblStockList = new HashMap<>();
@@ -265,13 +319,22 @@ class GameUI implements GameObserver {
 
     private HBox addGameBottom() {
         HBox box = new HBox();
+        box.setStyle(getStyle("PaneAction"));
+
+        grdPlayerHandAction = new GridPane();
+        grdPlayerHandAction.setHgap(10);
+        grdPlayerHandAction.setVgap(10);
+        grdPlayerHandAction.setPadding(new Insets(PANEL_SPACING));
+
+        Label lbl = new Label("Choose a tile to place");
+        grdPlayerHandAction.add(lbl, 0, 2);
+        GridPane.setColumnSpan(lbl, 3);
+
+        box.getChildren().add(grdPlayerHandAction);
 
         return box;
     }
 
-    private String chooseMerge(String option1, String option2) {
-        return option1;
-    }
 
     @Override
     public void notifyPlayerUpdate(Player player) {
@@ -284,6 +347,7 @@ class GameUI implements GameObserver {
         }
 
         addHandTiles(grdPlayerHand, player);
+        addHandTileButtons(grdPlayerHandAction, player);
     }
 
     @Override
@@ -293,8 +357,6 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyMergeDecision(String option1, String option2, Tile tile) {
-        updateScene(stockChooserRoot);
-        tile.setCorporation(chooseMerge(option1, option2));
     }
 
     @Override
@@ -311,7 +373,12 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyFormOption(String[] options, Tile tile) {
+        assert options.length > 0;
 
+        ChoiceDialog<String> dialog = new ChoiceDialog<>();
+        dialog.getItems().addAll(options);
+        var result = dialog.showAndWait();
+        result.ifPresent(tile::setCorporation);
     }
 
     @Override
