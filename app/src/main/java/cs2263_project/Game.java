@@ -87,8 +87,10 @@ public class Game {
 
         turnPlayer = activePlayer = smallestIndex;
 
-        if (observer != null)
+        if (observer != null) {
+            observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[turnPlayer]);
+        }
 
     }
 
@@ -172,20 +174,36 @@ public class Game {
         players[activePlayer].subtractDollars(price);
         stockList.subtractStock(stock, 1);
 
-        if (observer != null)
+        if (observer != null) {
+            observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[activePlayer]);
+        }
 
         return true;
     }
 
+    /**
+     * Checks whether a tile can currently be played
+     * @param tile the tile to check
+     * @return whether the tile can be played
+     */
     public boolean isTilePlaceable(@NonNull Tile tile) {
         return board.isTilePlaceable(tile);
     }
 
+    /**
+     * Checks whether a tile can ever be played
+     * @param tile the tile to check
+     * @return whether the tile can ever be played
+     */
     public boolean isTileUnplayable(@NonNull Tile tile) {
         return board.isTileUnplayable(tile);
     }
 
+    /**
+     * Sell a stock from the active player's hand
+     * @param stock the corporation to sell stock of
+     */
     public void sellStock(@NonNull String stock) {
         if (players[activePlayer].stockAmount(stock) <= 0)
             throw new RuntimeException("Player has insufficient stock to sell");
@@ -197,8 +215,10 @@ public class Game {
             players[activePlayer].addDollars(price);
             stockList.addStock(stock, 1);
 
-            if (observer != null)
+            if (observer != null) {
+                observer.notifyChangeStocks(stockList.getAllStocks());
                 observer.notifyPlayerUpdate(players[activePlayer]);
+            }
         }
     }
 
@@ -217,6 +237,11 @@ public class Game {
 
             players[activePlayer].addStock(to, 1);
             stockList.subtractStock(to, 1);
+
+            if (observer != null) {
+                observer.notifyChangeStocks(stockList.getAllStocks());
+                observer.notifyPlayerUpdate(players[activePlayer]);
+            }
         }
     }
 
@@ -279,6 +304,10 @@ public class Game {
         }
     }
 
+    /**
+     * Register a game-state observer to get notifications about changes in game state
+     * @param observer the observer to register
+     */
     public void registerObserver(@NonNull GameObserver observer) {
         this.observer = observer;
         if (players != null && players.length != 0)

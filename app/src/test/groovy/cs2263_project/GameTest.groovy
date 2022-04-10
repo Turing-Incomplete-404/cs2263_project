@@ -1,6 +1,6 @@
 package cs2263_project
 
-import lombok.NonNull
+
 import spock.lang.Specification
 
 class GameTest extends Specification {
@@ -148,7 +148,7 @@ class GameTest extends Specification {
         game.buyStock(corporation)
 
         then:
-        game.stockList.Stocks.get(corporation) == 24
+        game.stockList.stocks.get(corporation) == 24
         game.players[game.activePlayer].stockAmount(corporation) == 1
         game.players[0].dollars == 6000 - game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
     }
@@ -168,7 +168,7 @@ class GameTest extends Specification {
         game.sellStock(corporation)
 
         then:
-        game.stockList.Stocks.get(corporation) == 25
+        game.stockList.stocks.get(corporation) == 25
         game.players[game.activePlayer].stockAmount(corporation) == 0
         game.players[0].dollars == 6000
     }
@@ -202,7 +202,7 @@ class GameTest extends Specification {
         game.players.length == 2
         game.players[game.activePlayer].dollars != 6000
         game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 1
-        game.stockList.Stocks.get(GameInfo.Corporations[0]) == 24
+        game.stockList.stocks.get(GameInfo.Corporations[0]) == 24
         game.tileDeque.tiles.isEmpty() == false
     }
 

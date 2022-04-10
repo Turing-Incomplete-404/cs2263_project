@@ -10,26 +10,51 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class GameUI implements GameObserver {
     private BorderPane root;
     private Label lblPlayerTurn;
     private Label lblGamePhase;
-    private Label lblPlayerHand;
+    private Label lblPlayerHandHeader;
     private Label lblPlayerMoney;
     private GridPane grdTiles;
+    private GridPane grdPlayerHand;
     private Label[][] tileGrid;
+    private Map<String, Label> lblPlayerStocks;
+    private Map<String, Label> lblStockList;
 
-    private static final int BOARD_SPACING = 10;
+
+    /**
+     * Hard coded variables to control sizing and spacing
+     */
+    private static final int BOARD_TILE_SPACING = 10;
+    private static final int PANEL_SPACING = 10;
     private static final int TILE_WIDTH = 30;
     private static final int TILE_HEIGHT = 30;
+
+    /**
+     * Maps to map control types to jfx css code. Put entries in the static block below
+     */
     private static final Map<String, String> fillColors = new HashMap<>();
     private static final Map<String, String> borderColors = new HashMap<>();
     private static final Map<String, String> borderThickness = new HashMap<>();
     private static final Map<String, String> fonts = new HashMap<>();
 
+
+    /**
+     * Control categories: [] indicates an optional addition () a mandatory one
+     *
+     * EmptyTile - a Tile of the board that is empty
+     * PlayerInfo[Header] - info about the player and its corresponding header
+     * CorporationsInfo[Header] - info about the stocklist corporations and its corresponding header
+     * GameStatusHeader - header about game status
+     * CorporationKeyColor(corp name) - the corporation color key block
+     * FillTile(corp name) - a Tile of the board filled with a given corporation
+     */
     static {
         fillColors.put("EmptyTile", "#CCCCCC");
         borderColors.put("EmptyTile", "#000000");
@@ -39,20 +64,48 @@ class GameUI implements GameObserver {
         fonts.put("PlayerInfoHeader", "16 sansserif");
         fonts.put("PlayerInfo", "12 sansserif");
 
+        fonts.put("CorporationsInfoHeader", "16 sansserif");
+        fonts.put("CorporationsInfo", "12 sansserif");
+
         fonts.put("GameStatusHeader", "20 sansserif");
+
+
+        String[] corporationColors = new String[GameInfo.Corporations.length];
+        corporationColors[0] = "#FFFFD1";
+        corporationColors[1] = "#B5B9FF";
+        corporationColors[2] = "#BFFCC6";
+        corporationColors[3] = "#FFC9DE";
+        corporationColors[4] = "#B28DFF";
+        corporationColors[5] = "#6EB5FF";
+        corporationColors[6] = "#C4FAF8";
+
+        for(int i = 0; i < corporationColors.length; i++) {
+            fillColors.put(String.format("CorporationKeyColor%s", GameInfo.Corporations[i]), corporationColors[i]);
+
+            String name = String.format("FillTile%s", GameInfo.Corporations[i]);
+            fillColors.put(name, corporationColors[i]);
+            borderColors.put(name, "#000000");
+            borderThickness.put(name, "5 5 5 5");
+            fonts.put(name, "12 serif");
+        }
     }
 
-    private String getStyle(String type) {
+    /**
+     * Generate the jfx css code for a control category
+     * @param category the category of control to generate the code for
+     * @return the generated jfx css code
+     */
+    private String getStyle(String category) {
         String result = "";
 
-        if (fillColors.containsKey(type))
-            result += String.format("-fx-background-color: %s;", fillColors.get(type));
-        if (borderColors.containsKey(type))
-            result += String.format("-fx-border-color: %s;", borderColors.get(type));
-        if (borderThickness.containsKey(type))
-            result += String.format("-fx-border-thickness: %s;", borderThickness.get(type));
-        if (fonts.containsKey(type))
-            result += String.format("-fx-font: %s;", fonts.get(type));
+        if (fillColors.containsKey(category))
+            result += String.format("-fx-background-color: %s;", fillColors.get(category));
+        if (borderColors.containsKey(category))
+            result += String.format("-fx-border-color: %s;", borderColors.get(category));
+        if (borderThickness.containsKey(category))
+            result += String.format("-fx-border-thickness: %s;", borderThickness.get(category));
+        if (fonts.containsKey(category))
+            result += String.format("-fx-font: %s;", fonts.get(category));
 
         return result;
     }
@@ -69,6 +122,7 @@ class GameUI implements GameObserver {
 
     HBox addTop() {
         HBox topbox = new HBox(50);
+        topbox.setPadding(new Insets(PANEL_SPACING));
         HBox lefttopbox = new HBox();
         HBox centertopbox = new HBox();
         HBox righttopbox = new HBox();
@@ -92,10 +146,11 @@ class GameUI implements GameObserver {
 
     GridPane addCenter() {
         grdTiles = new GridPane();
+        grdTiles.setPadding(new Insets(PANEL_SPACING));
         grdTiles.setStyle(getStyle("GridGameBoard"));
         tileGrid = new Label[GameBoard.WIDTH][GameBoard.HEIGHT];
-        grdTiles.setHgap(BOARD_SPACING);
-        grdTiles.setVgap(BOARD_SPACING);
+        grdTiles.setHgap(BOARD_TILE_SPACING);
+        grdTiles.setVgap(BOARD_TILE_SPACING);
 
         for (int x = 0; x < GameBoard.WIDTH; x++) {
             for (int y = 0; y < GameBoard.HEIGHT; y++) {
@@ -117,25 +172,78 @@ class GameUI implements GameObserver {
         return grdTiles;
     }
 
-    VBox addLeft() {
+    private void addHandTiles(GridPane pane, Player player) {
+        pane.getChildren().clear();
+        List<Tile> tiles = player.getTiles();
+
+        for(int i = 0; i < tiles.size(); i++) {
+            Label label = new Label();
+            label.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
+            label.setAlignment(Pos.CENTER);
+            label.setText(tiles.get(i).getTileName());
+            label.setStyle(getStyle("EmptyTile"));
+            pane.add(label, i % 3, (i / 3) + 1);
+        }
+    }
+
+    private VBox addLeft() {
         VBox box = new VBox();
-        lblPlayerHand = new Label("Hand: Null");
-        lblPlayerHand.setStyle(getStyle("PlayerInfoHeader"));
+        box.setPadding(new Insets(PANEL_SPACING));
+        lblPlayerStocks = new HashMap<>();
+
+        lblPlayerHandHeader = new Label("Hand: Null");
+        lblPlayerHandHeader.setStyle(getStyle("PlayerInfoHeader"));
 
         lblPlayerMoney = new Label("Money: none");
         lblPlayerMoney.setStyle(getStyle("PlayerInfo"));
 
-        box.getChildren().addAll(lblPlayerHand, lblPlayerMoney);
-        box.setSpacing(5);
+        box.getChildren().addAll(lblPlayerHandHeader, lblPlayerMoney);
+        box.setSpacing(10);
+
+        VBox stockbox = new VBox();
+
+        for(String s : GameInfo.Corporations) {
+            Label label = new Label(s + ": ???");
+            stockbox.getChildren().add(label);
+            lblPlayerStocks.put(s, label);
+        }
+
+        box.getChildren().add(stockbox);
+        box.getChildren().add(new Label("Tiles:"));
+
+        grdPlayerHand = new GridPane();
+        grdPlayerHand.setVgap(10);
+        grdPlayerHand.setHgap(10);
+
+        box.getChildren().add(grdPlayerHand);
 
         return box;
     }
 
     VBox addRight() {
         VBox box = new VBox();
+        box.setPadding(new Insets(PANEL_SPACING));
+        box.setSpacing(10);
+        lblStockList = new HashMap<>();
+
         Label lblCorpStats = new Label("Corporation Stats");
+        lblCorpStats.setStyle(getStyle("CorporationsInfoHeader"));
 
         box.getChildren().add(lblCorpStats);
+
+        for(String corp : GameInfo.Corporations) {
+            HBox titlebox = new HBox(5);
+            Label colorlabel = new Label("   ");
+            colorlabel.setStyle(getStyle(String.format("CorporationKeyColor%s", corp)));
+
+            Label namelabel = new Label(corp + ": ???");
+            namelabel.setStyle(getStyle("CorporationsInfo"));
+
+            titlebox.getChildren().addAll(colorlabel, namelabel);
+
+            box.getChildren().add(titlebox);
+            lblStockList.put(corp, namelabel);
+        }
 
         return box;
     }
@@ -153,8 +261,14 @@ class GameUI implements GameObserver {
     @Override
     public void notifyPlayerUpdate(Player player) {
         lblPlayerTurn.setText("Active player: " + player.getName());
-        lblPlayerHand.setText(player.getName() + "'s hand");
+        lblPlayerHandHeader.setText(player.getName() + "'s hand");
         lblPlayerMoney.setText(String.format("Money: %d$", player.getDollars()));
+
+        for(String corp : GameInfo.Corporations) {
+            lblPlayerStocks.get(corp).setText(String.format("%s: %d", corp, player.stockAmount(corp)));
+        }
+
+        addHandTiles(grdPlayerHand, player);
     }
 
     @Override
@@ -174,7 +288,9 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyChangeStocks(Map<String, Integer> param) {
-
+        for(String corp : param.keySet()) {
+            lblStockList.get(corp).setText(String.format("%s: %d", corp, param.get(corp)));
+        }
     }
 
     @Override

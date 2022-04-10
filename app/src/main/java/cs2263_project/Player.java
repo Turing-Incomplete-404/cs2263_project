@@ -2,7 +2,9 @@ package cs2263_project;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -82,5 +84,9 @@ public class Player {
      */
     public int stockAmount(String stock) {
         return (int) stocks.get(stock);
+    }
+
+    public List<Tile> getTiles() {
+        return new ArrayList<>(hand);
     }
 }
