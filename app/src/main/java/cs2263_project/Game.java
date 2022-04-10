@@ -35,14 +35,10 @@ public class Game {
 
 
     /**
-     * Starts a new game
+     * Resets the game to the opening state with an empty board
      * @param playerNames A list of 2-6 names of players participating
      */
-    public void start(@NonNull List<String> playerNames) {
-        if (playerNames.size() < 2 || playerNames.size() > 6) {
-            throw new RuntimeException("A game must have 2-6 players");
-        }
-
+    private void reset(List<String> playerNames) {
         tileDeque = new TileDeque();
         board = new GameBoard();
         stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
@@ -56,6 +52,18 @@ public class Game {
                 players[i].addTile(tileDeque.drawTile());
             }
         }
+    }
+
+    /**
+     * Starts a new game
+     * @param playerNames A list of 2-6 names of players participating
+     */
+    public void start(@NonNull List<String> playerNames) {
+        if (playerNames.size() < 2 || playerNames.size() > 6) {
+            throw new RuntimeException("A game must have 2-6 players");
+        }
+
+        reset(playerNames);
 
         Tile[] startTiles = new Tile[players.length];
         int smallestDist = 0;

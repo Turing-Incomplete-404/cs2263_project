@@ -44,7 +44,7 @@ class GameTest extends Specification {
         Game game = Game.getInstance()
 
         when:
-        game.start(get2GamePlayers())
+        game.reset(get2GamePlayers())
 
         then:
         game.players[0].getName().equals("Bob")
@@ -70,11 +70,11 @@ class GameTest extends Specification {
         Game game = Game.getInstance()
         var observerStub = new GameObserverStub()
         game.registerObserver(observerStub)
-
-        when:
-        game.start(get2GamePlayers())
+        game.reset(get2GamePlayers())
         Tile A1 = new Tile(0, 0)
         Tile A2 = new Tile(1, 0)
+
+        when:
         game.placeTile(A1)
         game.placeTile(A2)
 
@@ -89,7 +89,7 @@ class GameTest extends Specification {
         Game game = Game.getInstance()
         var observerStub = new GameObserverStub()
         game.registerObserver(observerStub)
-        game.start(get2GamePlayers())
+        game.reset(get2GamePlayers())
         Tile A1 = new Tile(0, 0)
         Tile A2 = new Tile(1, 0)
         Tile C1 = new Tile(0, 2)

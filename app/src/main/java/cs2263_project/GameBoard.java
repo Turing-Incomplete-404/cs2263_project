@@ -93,6 +93,10 @@ public class GameBoard {
      * @param tile the tile to place
      */
     void placeTile(@NonNull Tile tile) {
+        assert tile.getX() >= 0 && tile.getX() <= WIDTH - 1;
+        assert tile.getY() >= 0 && tile.getY() <= HEIGHT - 1;
+        assert board[tile.getX()][tile.getY()] == null;
+
         if (isTilePlaceable(tile)) {
 
             if (wouldTriggerFormation(tile)) {
