@@ -115,8 +115,11 @@ public class Game {
                     validCorps.add(corp);
             }
 
-            if (observer != null)
-                observer.notifyFormOption((String[]) validCorps.toArray(), tile);
+            if (observer != null) {
+                String[] array = new String[validCorps.size()];
+                validCorps.toArray(array);
+                observer.notifyFormOption(array, tile);
+            }
         }
 
         if (board.wouldTriggerMerge(tile)) {

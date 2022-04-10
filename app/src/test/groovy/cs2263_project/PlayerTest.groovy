@@ -35,17 +35,19 @@ class PlayerTest extends Specification {
 
     def "check player stock boundary"() {
         given:
+        player = new Player("Joe", GameInfo.Corporations)
         player.addStock(corporation, 1)
 
         when:
         player.subtractStocks(corporation, 2)
 
         then:
-        player.stockAmount(corporation) != -1
+        thrown(AssertionError)
     }
 
     def "check removing tile from hand"(){
         given:
+        player = new Player("Joe", GameInfo.Corporations)
         Tile tile1 = new Tile(1,1)
         Tile tile2 = new Tile(2,1)
         Tile tile3 = new Tile(1,2)

@@ -37,7 +37,7 @@ public class GameBoard {
         int x = tile.getX();
         int y = tile.getY();
 
-        List<Tile> neighbors = new ArrayList<>();
+        Set<Tile> neighbors = new HashSet<>();
 
         x = max(0, x - 1);
         if (board[x][y] != null)
@@ -58,7 +58,7 @@ public class GameBoard {
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
-        return neighbors;
+        return neighbors.stream().toList();
     }
 
     /**
