@@ -39,6 +39,7 @@ public class Game {
      * @param playerNames A list of 2-6 names of players participating
      */
     private void reset(List<String> playerNames) {
+        gameInfo = new GameInfo();
         tileDeque = new TileDeque();
         board = new GameBoard();
         stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
