@@ -1,22 +1,15 @@
 package cs2263_project;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javafx.geometry.*;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import java.util.*;
 
 class GameUI implements GameObserver {
     private BorderPane root;
+
+    private BorderPane mainGameRoot;
     private Label lblPlayerTurn;
     private Label lblGamePhase;
     private Label lblPlayerHandHeader;
@@ -27,26 +20,24 @@ class GameUI implements GameObserver {
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
 
+    private BorderPane stockChooserRoot;
 
-    /**
-     * Hard coded variables to control sizing and spacing
-     */
+
+    /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
     private static final int PANEL_SPACING = 10;
     private static final int TILE_WIDTH = 30;
     private static final int TILE_HEIGHT = 30;
 
-    /**
-     * Maps to map control types to jfx css code. Put entries in the static block below
-     */
+    /* Maps to map control types to jfx css code. Put entries in the static block below */
     private static final Map<String, String> fillColors = new HashMap<>();
     private static final Map<String, String> borderColors = new HashMap<>();
     private static final Map<String, String> borderThickness = new HashMap<>();
     private static final Map<String, String> fonts = new HashMap<>();
 
 
-    /**
-     * Control categories: [] indicates an optional addition () a mandatory one
+    /*
+     * Control categories: [] indicates an optional addition, while () a mandatory one
      *
      * EmptyTile - a Tile of the board that is empty
      * PlayerInfo[Header] - info about the player and its corresponding header
@@ -56,18 +47,18 @@ class GameUI implements GameObserver {
      * FillTile(corp name) - a Tile of the board filled with a given corporation
      */
     static {
-        fillColors.put("EmptyTile", "#CCCCCC");
-        borderColors.put("EmptyTile", "#000000");
+        fillColors.put(     "EmptyTile", "#CCCCCC");
+        borderColors.put(   "EmptyTile", "#000000");
         borderThickness.put("EmptyTile", "5 5 5 5");
-        fonts.put("EmptyTile", "12 serif");
+        fonts.put(          "EmptyTile", "12 serif");
 
-        fonts.put("PlayerInfoHeader", "16 sansserif");
-        fonts.put("PlayerInfo", "12 sansserif");
+        fonts.put(          "PlayerInfoHeader", "16 sansserif");
+        fonts.put(          "PlayerInfo",       "12 sansserif");
 
-        fonts.put("CorporationsInfoHeader", "16 sansserif");
-        fonts.put("CorporationsInfo", "12 sansserif");
+        fonts.put(          "CorporationsInfoHeader",   "16 sansserif");
+        fonts.put(          "CorporationsInfo",         "12 sansserif");
 
-        fonts.put("GameStatusHeader", "20 sansserif");
+        fonts.put(          "GameStatusHeader", "20 sansserif");
 
 
         String[] corporationColors = new String[GameInfo.Corporations.length];
@@ -110,14 +101,22 @@ class GameUI implements GameObserver {
         return result;
     }
 
+    private void updateScene(Node node) {
+        root.getChildren().clear();
+        root.setCenter(node);
+    }
+
     public GameUI() {
         root = new BorderPane();
+        mainGameRoot = new BorderPane();
 
-        root.setTop(addTop());
-        root.setCenter(addCenter());
-        root.setLeft(addLeft());
-        root.setRight(addRight());
-        root.setBottom(addBottom());
+        mainGameRoot.setTop(addTop());
+        mainGameRoot.setCenter(addCenter());
+        mainGameRoot.setLeft(addLeft());
+        mainGameRoot.setRight(addRight());
+        mainGameRoot.setBottom(addBottom());
+
+        updateScene(mainGameRoot);
     }
 
     HBox addTop() {
