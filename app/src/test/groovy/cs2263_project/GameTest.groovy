@@ -16,13 +16,20 @@ class GameTest extends Specification {
         @Override
         void notifyStockDecision(Player player, String fromCorp, String toCorp) { stockDecisionCalled = true }
         @Override
-        void notifyMergeDecision(String option1, String option2, Tile tile) { mergeDecisionCalled = true }
+        void notifyMergeDecision(String option1, String option2, Tile tile) {
+            mergeDecisionCalled = true
+            tile.setCorporation(option1)
+        }
         @Override
         void notifyGameEnd(String[] names, Integer[] dollars) { gameEndCalled = true }
         @Override
         void notifyChangeStocks(Map<String, Integer> param) { changeStocksCalled = true }
         @Override
-        void notifyFormOption(String[] options, Tile tile) { formOptionCalled = true; tile.setCorporation(options[0]) }
+        void notifyFormOption(String[] options, Tile tile) {
+            formOptionCalled = true
+            assert options.length > 0
+            tile.setCorporation(options[0])
+        }
     }
 
     List<String> get2GamePlayers() {
@@ -74,5 +81,31 @@ class GameTest extends Specification {
         then:
         observerStub.formOptionCalled
         game.board.getCurrentCorporationList().size() == 1
+        game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 2
+    }
+
+    def "game detects merger"() {
+        given:
+        Game game = Game.getInstance()
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        game.start(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        Tile A2 = new Tile(1, 0)
+        Tile C1 = new Tile(0, 2)
+        Tile C2 = new Tile(1, 2)
+        Tile B2merge = new Tile(1, 1)
+        game.placeTile(A1)
+        game.placeTile(A2)
+        game.placeTile(C1)
+        game.placeTile(C2)
+
+        when:
+        game.placeTile(B2merge)
+
+        then:
+        observerStub.mergeDecisionCalled
+        game.board.getCurrentCorporationList().size() == 1
+        game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 5
     }
 }
