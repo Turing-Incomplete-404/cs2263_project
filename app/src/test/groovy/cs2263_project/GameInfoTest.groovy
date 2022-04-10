@@ -29,7 +29,7 @@ class GameInfoTest extends Specification {
 
         expect:
         gameInfo.getSecondaryBonus(GameInfo.Corporations[0],3) == 1500
-        gameInfo.getSecondaryBonus(GameInfo.Corporations[2],5) == 3000
+        gameInfo.getSecondaryBonus(GameInfo.Corporations[4],5) == 3000
         gameInfo.getSecondaryBonus(GameInfo.Corporations[5],20) == 4500
     }
 
@@ -38,8 +38,8 @@ class GameInfoTest extends Specification {
         GameInfo gameInfo = new GameInfo()
 
         expect:
-        gameInfo.getCost(GameInfo.Corporations[0],2) == 200
-        gameInfo.getCost(GameInfo.Corporations[2],2) == 300
-        gameInfo.getCost(GameInfo.Corporations[5],2) == 400
+        gameInfo.getCost(GameInfo.Corporations[1],2) == 200
+        gameInfo.getCost(GameInfo.Corporations[3],2) == 300
+        gameInfo.getCost(GameInfo.Corporations[6],2) == 400
     }
 }
