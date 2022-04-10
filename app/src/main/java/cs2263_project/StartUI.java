@@ -23,44 +23,31 @@ public class StartUI extends Application {
     private int mainWidth = 500;
     private int mainHeight = 600;
     private int menuNumber;
+    private Scene scene;
+    private BorderPane root;
+    private Game game;
+    private GameUI gameUI;
+
 
     public StartUI() {
         menuNumber = 1;
-    }
-
-    public void updateScene(Stage stage) {
-        BorderPane border = new BorderPane();
-    
-        border.setTop(addTop());
-        border.setCenter(addCenter());
-        border.setBottom(addBottom());
-
-        Scene scene = new Scene(border, mainWidth, mainHeight);
-
-        stage.setScene(scene);
-        stage.show();
-        stage.setAlwaysOnTop(true);
-        stage.setAlwaysOnTop(false);
+        root = new BorderPane();
     }
 
     @Override
     public void start(Stage stage) throws Exception{
         stage.setTitle("Acquire");
 
-        updateScene(stage);
+        root.setTop(addTop());
+        root.setCenter(addCenter());
+        root.setBottom(addBottom());
 
-        // Commented out for the time being.
-        // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-        //     @Override
-        //     public void handle(KeyEvent event) {
-        //         switch (event.getCode()) {
-        //             case ESCAPE:
-        //                 stage.close();
-        //             default: 
-        //         }
-        //     }
-        // });
+        scene = new Scene(root, mainWidth, mainHeight);
 
+        stage.setScene(scene);
+        stage.show();
+        stage.setAlwaysOnTop(true);
+        stage.setAlwaysOnTop(false);
         
     }
 
@@ -160,13 +147,13 @@ public class StartUI extends Application {
         newGameButton.setOnAction((ActionEvent changeMenu) -> {
             menuNumber = 2;
             System.out.print("Button Pressed!!");
-            updateScene();
+            startGame();            
         });
 
         loadGameButton.setOnAction((ActionEvent loadGame) -> {
             menuNumber = 3;
             System.out.print("Loading game... JK");
-            updateScene();
+            
         });
 
         exitButton.setOnAction((ActionEvent changeMenu) -> {
@@ -195,5 +182,11 @@ public class StartUI extends Application {
         bottomHBox.getChildren().addAll();
 
         return bottomHBox;
+    }
+
+    private void startGame() {
+        GameUI gui = new GameUI();
+        game.registerObserver(gui);
+        //updateScene(gui.getRoot());
     }
 }
