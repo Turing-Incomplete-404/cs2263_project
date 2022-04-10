@@ -51,6 +51,27 @@ public class StartUI extends Application {
         
     }
 
+    @Override
+    public void start(Stage stage) throws Exception{
+        stage.setTitle("Acquire");
+
+        updateScene(stage);
+
+        // Commented out for the time being.
+        // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        //     @Override
+        //     public void handle(KeyEvent event) {
+        //         switch (event.getCode()) {
+        //             case ESCAPE:
+        //                 stage.close();
+        //             default: 
+        //         }
+        //     }
+        // });
+
+        
+    }
+
     private HBox addTop() {
         String topColor = "#00A2E8;";
         String titleBoxColor = "#FFFFFF";
@@ -147,13 +168,21 @@ public class StartUI extends Application {
         newGameButton.setOnAction((ActionEvent changeMenu) -> {
             menuNumber = 2;
             System.out.print("Button Pressed!!");
+<<<<<<< HEAD
             startGame();            
+=======
+            updateScene();
+>>>>>>> origin/feature/Adding_Second_Title_Screen
         });
 
         loadGameButton.setOnAction((ActionEvent loadGame) -> {
             menuNumber = 3;
             System.out.print("Loading game... JK");
+<<<<<<< HEAD
             
+=======
+            updateScene();
+>>>>>>> origin/feature/Adding_Second_Title_Screen
         });
 
         exitButton.setOnAction((ActionEvent changeMenu) -> {
