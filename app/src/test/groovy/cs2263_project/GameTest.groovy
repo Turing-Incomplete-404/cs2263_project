@@ -110,9 +110,9 @@ class GameTest extends Specification {
         game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 5
     }
 
-    void addAllTiles(GameBoard board, Tile... tiles) {
+    void addAllTiles(Game game, Tile... tiles) {
         for(Tile t : tiles)
-            board.placeTile(t)
+            game.placeTile(t)
     }
 
     def "check game buy stock"() {
@@ -120,8 +120,10 @@ class GameTest extends Specification {
         String corporation = GameInfo.Corporations[0]
         Game game = Game.getInstance()
         game.reset(get2GamePlayers())
-        game.activePlayer = 0
-        game.turnPlayer = 0
+        Tile A1 = new Tile(0, 0)
+        Tile A2 = new Tile(1, 0)
+        A2.setCorporation(corporation)
+        addAllTiles(game, A1, A2)
 
         when:
         game.buyStock(corporation)
@@ -129,6 +131,59 @@ class GameTest extends Specification {
         then:
         game.stockList.Stocks.get(corporation) == 24
         game.players[game.activePlayer].stockAmount(corporation) == 1
-        game.players[0].dollars == 6000 - 500
+        game.players[0].dollars == 6000 - game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
+    }
+
+    def "check game sell stock"() {
+        given:
+        String corporation = GameInfo.Corporations[0]
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        Tile A2 = new Tile(1, 0)
+        A2.setCorporation(corporation)
+        addAllTiles(game, A1, A2)
+        game.buyStock(corporation)
+
+        when:
+        game.sellStock(corporation)
+
+        then:
+        game.stockList.Stocks.get(corporation) == 25
+        game.players[game.activePlayer].stockAmount(corporation) == 0
+        game.players[0].dollars == 6000
+    }
+
+    def "check game saving"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        Tile A2 = new Tile(1, 0)
+        A2.setCorporation(GameInfo.Corporations[0])
+        addAllTiles(game, A1, A2)
+        game.buyStock(GameInfo.Corporations[0])
+
+        when:
+        game.save("test_gamefile.json")
+
+        then:
+        new File("test_gamefile.json").exists()
+    }
+
+    def "check game loading"() {
+        given:
+        Game game = Game.getInstance()
+
+        when:
+        game.load("test_gamefile.json")
+
+        then:
+        game.board.board[0][0] != null && GameInfo.Corporations[0].equals(game.board.board[0][0].getCorporation())
+        game.players.length == 2
+        game.players[game.activePlayer].dollars != 6000
+        game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 1
+        game.stockList.Stocks.get(GameInfo.Corporations[0]) == 24
+        game.tileDeque.tiles.isEmpty() == false
     }
 }

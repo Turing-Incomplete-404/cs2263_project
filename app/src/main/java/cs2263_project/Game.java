@@ -242,6 +242,7 @@ public class Game {
             state.turnPlayer = turnPlayer;
             state.activePlayer = activePlayer;
             new Gson().toJson(state, writer);
+            writer.close();
         }
         catch (IOException ex) {
             throw new RuntimeException("Unable to serialize file with reason: " + ex.getMessage());

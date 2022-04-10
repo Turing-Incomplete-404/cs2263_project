@@ -33,3 +33,6 @@ build
 
 # Ignore eclipese ides
 .project
+
+# Ignore test files
+test_*
