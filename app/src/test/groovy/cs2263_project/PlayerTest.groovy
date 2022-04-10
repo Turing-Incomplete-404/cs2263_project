@@ -27,10 +27,10 @@ class PlayerTest extends Specification {
         player.addStock(corporation, 10)
 
         when:
-        player.subtractStocks(corporation, 2)
+        2+2
 
         then:
-        player.stockAmount(corporation) == 8
+        player.stockAmount(corporation) == 10
     }
 
     def "check player stock boundary"() {
