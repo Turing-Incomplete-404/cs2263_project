@@ -36,6 +36,7 @@ class PlayerTest extends Specification {
     def "check player stock boundary"() {
         given:
         player = new Player("Joe", GameInfo.Corporations)
+        StockList stocklist = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS)
         player.addStock(corporation, 1)
 
         when:

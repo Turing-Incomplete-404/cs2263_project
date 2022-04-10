@@ -1,5 +1,6 @@
 package cs2263_project
 
+import lombok.NonNull
 import spock.lang.Specification
 
 class GameTest extends Specification {
@@ -107,5 +108,22 @@ class GameTest extends Specification {
         observerStub.mergeDecisionCalled
         game.board.getCurrentCorporationList().size() == 1
         game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 5
+    }
+
+    def "check game buy stock"() {
+        given:
+        String corporation = GameInfo.Corporations[0]
+        Game game = Game.getInstance()
+        game.start(get2GamePlayers())
+        Player player = new Player("Bill", GameInfo.Corporations)
+        game.players[0] = player
+        game.activePlayer = 0
+
+        when:
+        buyStock(corporation)
+
+        then:
+        stocklist.Stocks.get(corporation) == 24
+        activePlayer.stockAmount(corporation) == 1
     }
 }
