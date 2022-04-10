@@ -115,7 +115,6 @@ class GameTest extends Specification {
         String corporation = GameInfo.Corporations[0]
         Game game = Game.getInstance()
         game.start(get2GamePlayers())
-        StockList stocklist = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS)
         Player player = new Player("Bill", GameInfo.Corporations)
         game.players[0] = player
         game.activePlayer = 0
@@ -127,5 +126,6 @@ class GameTest extends Specification {
         then:
         game.stockList.Stocks.get(corporation) == 24
         game.players[game.activePlayer].stockAmount(corporation) == 1
+        game.players[0].dollars == 6000 - 500
     }
 }
