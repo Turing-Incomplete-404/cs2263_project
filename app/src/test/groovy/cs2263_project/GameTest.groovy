@@ -110,12 +110,16 @@ class GameTest extends Specification {
         game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 5
     }
 
+    void addAllTiles(GameBoard board, Tile... tiles) {
+        for(Tile t : tiles)
+            board.placeTile(t)
+    }
+
     def "check game buy stock"() {
         given:
         String corporation = GameInfo.Corporations[0]
         Game game = Game.getInstance()
-        game.start(get2GamePlayers())
-        StockList stocklist = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS)
+        game.reset(get2GamePlayers())
         Player player = new Player("Bill", GameInfo.Corporations)
         game.players[0] = player
         game.activePlayer = 0

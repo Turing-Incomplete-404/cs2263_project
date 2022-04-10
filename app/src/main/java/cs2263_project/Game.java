@@ -167,6 +167,7 @@ public class Game {
         if (stockList.isInStock(stock)) {
             players[activePlayer].addStock(stock, 1);
             players[activePlayer].subtractDollars(price);
+            stockList.subtractStock(stock, 1);
 
             if (observer != null)
                 observer.notifyPlayerUpdate(players[activePlayer]);
