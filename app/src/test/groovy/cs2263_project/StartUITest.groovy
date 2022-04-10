@@ -10,6 +10,7 @@ import javafx.stage.Stage
 import org.testfx.framework.spock.ApplicationSpec;
 
 class StartUITest extends ApplicationSpec {
+    StartUI startUI
     @Override
     void start(Stage stage) {
         /*
@@ -18,19 +19,40 @@ class StartUITest extends ApplicationSpec {
         stage.setScene(new Scene(new StackPane(button), 100, 100))
         stage.show()
          */
-        
+        startUI = new StartUI()
+        startUI.start(stage)
     }
 
-    def "should contain button"() {
+    def "should contain buttons"() {
         expect:
-        verifyThat('.button', hasText('click me!'))
+        verifyThat(lookup("New Game"), hasText('New Game'))
+        verifyThat(lookup("Load Game"),hasText('Load Game'))
+        verifyThat(lookup("Exit"),hasText('Exit'))
     }
 
-    def "should click on button"() {
+    /*
+    def "after clicking exit button"() {
         when:
-        clickOn(".button")
+        clickOn("Exit")
 
         then:
-        verifyThat('.button', hasText('clicked!'))
+        true
+    }
+     */
+
+    def "after clicking New Game button"(){
+        when:
+        clickOn("New Game")
+
+        then:
+        verifyThat(lookup("Start"),hasText("Start"))
+    }
+
+    def "player inputs are correct for New Game"(){
+        when:
+        clickOn("New Game")
+
+        then:
+        true
     }
 }

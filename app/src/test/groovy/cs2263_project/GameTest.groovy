@@ -31,6 +31,11 @@ class GameTest extends Specification {
             assert options.length > 0
             tile.setCorporation(options[0])
         }
+
+        @Override
+        void notifyTilePlaced(Tile tile) {
+
+        }
     }
 
     List<String> get2GamePlayers() {
