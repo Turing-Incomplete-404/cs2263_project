@@ -22,13 +22,13 @@ import java.io.*;
 public class StartUI extends Application {
     private int mainWidth = 500;
     private int mainHeight = 600;
-    private boolean isTitleScreen;
+    private int menuNumber;
 
     public StartUI() {
-        isTitleScreen = true;
+        menuNumber = 1;
     }
 
-    public Scene updateScene() {
+    public void updateScene(Stage stage) {
         BorderPane border = new BorderPane();
     
         border.setTop(addTop());
@@ -37,14 +37,17 @@ public class StartUI extends Application {
 
         Scene scene = new Scene(border, mainWidth, mainHeight);
 
-        return scene;
+        stage.setScene(scene);
+        stage.show();
+        stage.setAlwaysOnTop(true);
+        stage.setAlwaysOnTop(false);
     }
 
     @Override
     public void start(Stage stage) throws Exception{
         stage.setTitle("Acquire");
 
-        Scene scene = updateScene();
+        updateScene(stage);
 
         // Commented out for the time being.
         // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -58,10 +61,7 @@ public class StartUI extends Application {
         //     }
         // });
 
-        stage.setScene(scene);
-        stage.show();
-        stage.setAlwaysOnTop(true);
-        stage.setAlwaysOnTop(false);
+        
     }
 
     private HBox addTop() {
@@ -131,17 +131,46 @@ public class StartUI extends Application {
         secondMenuBox.setAlignment(Pos.CENTER);
         secondMenuBox.setPrefSize(mainWidth - (mainWidth * 0.75), mainHeight - (mainHeight * 0.5));
 
-        if (isTitleScreen) {
+        VBox thirdMenuBox = new VBox();
+        thirdMenuBox.setSpacing(10);
+        secondMenuBox.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
+        secondMenuBox.setAlignment(Pos.CENTER);
+        secondMenuBox.setPrefSize(mainWidth - (mainWidth * 0.75), mainHeight - (mainHeight * 0.5));
+
+
+        switch (menuNumber) {
+            case 1:
+            centerHBox.getChildren().clear();
             centerHBox.getChildren().addAll(firstMenuBox);
-        }
-        else {
+                break;
+            case 2:
+            centerHBox.getChildren().clear();
             centerHBox.getChildren().addAll(secondMenuBox);
+                break;
+            case 3:
+            centerHBox.getChildren().clear();
+            centerHBox.getChildren().addAll(thirdMenuBox);    
+                break;
+            default:
+                break;
         }
+
         firstMenuBox.getChildren().addAll(newGameButton, loadGameButton, exitButton);
         
         newGameButton.setOnAction((ActionEvent changeMenu) -> {
-            isTitleScreen = false;
+            menuNumber = 2;
+            System.out.print("Button Pressed!!");
             updateScene();
+        });
+
+        loadGameButton.setOnAction((ActionEvent loadGame) -> {
+            menuNumber = 3;
+            System.out.print("Loading game... JK");
+            updateScene();
+        });
+
+        exitButton.setOnAction((ActionEvent changeMenu) -> {
+            Platform.exit();
         });
 
         return centerHBox;
