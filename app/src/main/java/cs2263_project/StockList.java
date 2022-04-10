@@ -15,7 +15,7 @@ class StockList {
     }
 
     public boolean isInStock(String stock) {
-        return Stocks.get(stock).equals(0);
+        return !Stocks.get(stock).equals(0);
     }
 
     public void addStock(String stock, int number) {

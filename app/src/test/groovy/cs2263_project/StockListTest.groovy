@@ -23,7 +23,32 @@ class StockListTest extends Specification {
         stocklist.subtractStock(corporation, 25)
 
         then:
-        stocklist.isInStock(corporation)
+        stocklist.isInStock(corporation) == false
     }
 
+    def "check stocklist stock addition"() {
+        given:
+        StockList stocklist = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS)
+        stocklist.subtractStock(corporation,5)
+
+        when:
+        stocklist.addStock(corporation, 2)
+
+        then:
+        stocklist.Stocks.get(corporation) == 22
+    }
+
+    def "check stocklist constructor and add/subtract"() {
+        given:
+        StockList stocklist = new StockList(new String[] { "corp1","corp2","corp3" }, 69)
+
+        when:
+        stocklist.subtractStock("corp1", 1)
+        stocklist.subtractStock("corp3", 59)
+
+        then:
+        stocklist.Stocks.get("corp1") == 68
+        stocklist.Stocks.get("corp2") == 69
+        stocklist.Stocks.get("corp3") == 10
+    }
 }
