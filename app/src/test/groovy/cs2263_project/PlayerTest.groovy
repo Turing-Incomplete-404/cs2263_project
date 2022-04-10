@@ -10,11 +10,10 @@ class PlayerTest extends Specification {
     static Player player
     String corporation = GameInfo.Corporations[0]
 
-    def setupSpec() {
-        player = new Player("Joe", GameInfo.Corporations)
-    }
-
     def "check player stock addition"() {
+        given:
+        player = new Player("Joe", GameInfo.Corporations)
+
         when:
         player.addStock(corporation, 1)
 
@@ -24,6 +23,7 @@ class PlayerTest extends Specification {
 
     def "check player stock subtraction"() {
         given:
+        player = new Player("Joe", GameInfo.Corporations)
         player.addStock(corporation, 10)
 
         when:
@@ -50,15 +50,17 @@ class PlayerTest extends Specification {
         Tile tile2 = new Tile(2,1)
         Tile tile3 = new Tile(1,2)
         Tile tile4 = new Tile(2,2)
-        player.addtile(tile1)
-        player.addtile(tile2)
-        player.addtile(tile3)
-        player.addtile(tile4)
+        player.addTile(tile1)
+        player.addTile(tile2)
+        player.addTile(tile3)
+        player.addTile(tile4)
 
         when:
         player.removeTile(tile2)
 
         then:
-        player.hand[0].equals(tile1) && player.hand[1].equals(tile3) && player.hand[2].equals(tile4)
+        player.hand[0].equals(tile1)
+        player.hand[1].equals(tile3)
+        player.hand[2].equals(tile4)
     }
 }

@@ -46,7 +46,7 @@ public class Player {
      * This method adds to a player's dollar amount
      * @param money
      */
-    public void addDollars(Integer money){
+    public void addDollars(int money){
         dollars += money;
     }
 
@@ -54,7 +54,7 @@ public class Player {
      * This method subtracts from a player's dollar amount
      * @param money
      */
-    public void subtractDollars(Integer money){
+    public void subtractDollars(int money){
         dollars -= money;
     }
 
@@ -63,7 +63,7 @@ public class Player {
      * @param stock
      * @param value
      */
-    public void addStock(String stock, Integer value){
+    public void addStock(String stock, int value){
         stocks.put(stock,(int)(stocks.get(stock))+value);
     }
 
@@ -72,8 +72,9 @@ public class Player {
      * @param stock
      * @param value
      */
-    public void subtractStocks(String stock, Integer value){
-        stocks.put(stock,(int)(stocks.get(stock))-value);
+    public void subtractStocks(String stock, int value) {
+        assert (int)stocks.get(stock) - value >= 0;
+        stocks.put(stock, (Integer)(stocks.get(stock)) - value);
     }
 
     /**
@@ -82,6 +83,6 @@ public class Player {
      * @return The number of stocks the player has
      */
     public int stockAmount(String stock) {
-        return (Integer)stocks.get(stock);
+        return (Integer) stocks.get(stock);
     }
 }
