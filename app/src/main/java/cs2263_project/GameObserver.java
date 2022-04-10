@@ -9,4 +9,5 @@ interface GameObserver {
     void notifyGameEnd(String[] names, Integer[] dollars);
     void notifyChangeStocks(Map<String, Integer> param);
     void notifyFormOption(String[] options, Tile tile);
+    void notifyTilePlaced(Tile tile);
 }

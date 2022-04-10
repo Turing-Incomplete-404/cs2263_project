@@ -44,13 +44,18 @@ class GameUI implements GameObserver {
      * CorporationsInfo[Header] - info about the stocklist corporations and its corresponding header
      * GameStatusHeader - header about game status
      * CorporationKeyColor(corp name) - the corporation color key block
-     * FillTile(corp name) - a Tile of the board filled with a given corporation
+     * FilledTile(corp name) - a Tile of the board filled with a given corporation
      */
     static {
-        fillColors.put(     "EmptyTile", "#CCCCCC");
+        fillColors.put(     "EmptyTile", "#F1F1F1");
         borderColors.put(   "EmptyTile", "#000000");
         borderThickness.put("EmptyTile", "5 5 5 5");
         fonts.put(          "EmptyTile", "12 serif");
+
+        fillColors.put(     "FilledTile", "#C1C1C1");
+        borderColors.put(   "FilledTile", "#000000");
+        borderThickness.put("FilledTile", "5 5 5 5");
+        fonts.put(          "FilledTile", "12 serif");
 
         fonts.put(          "PlayerInfoHeader", "16 sansserif");
         fonts.put(          "PlayerInfo",       "12 sansserif");
@@ -73,7 +78,7 @@ class GameUI implements GameObserver {
         for(int i = 0; i < corporationColors.length; i++) {
             fillColors.put(String.format("CorporationKeyColor%s", GameInfo.Corporations[i]), corporationColors[i]);
 
-            String name = String.format("FillTile%s", GameInfo.Corporations[i]);
+            String name = String.format("FilledTile%s", GameInfo.Corporations[i]);
             fillColors.put(name, corporationColors[i]);
             borderColors.put(name, "#000000");
             borderThickness.put(name, "5 5 5 5");
@@ -296,4 +301,14 @@ class GameUI implements GameObserver {
     public void notifyFormOption(String[] options, Tile tile) {
 
     }
+
+    @Override
+    public void notifyTilePlaced(Tile tile) {
+        if (tile.getCorporation() != null)
+            tileGrid[tile.getX()][tile.getY()].setStyle(getStyle(String.format("FilledTile%s", tile.getCorporation())));
+        else
+            tileGrid[tile.getX()][tile.getY()].setStyle(getStyle("FilledTile"));
+    }
+
+
 }

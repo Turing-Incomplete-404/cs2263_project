@@ -271,4 +271,12 @@ public class GameBoard {
         else
             return corps.stream().toList();
     }
+
+    public interface TileIterator { void func(Tile tile); }
+    public void forEachTile(TileIterator iterator) {
+        for (int x = 0; x < WIDTH; x++)
+            for (int y = 0; y < HEIGHT; y++)
+                if (board[x][y] != null)
+                    iterator.func(board[x][y]);
+    }
 }

@@ -83,6 +83,8 @@ public class Game {
             }
 
             board.placeTile(startTiles[i]);
+            if (observer != null)
+                observer.notifyTilePlaced(startTiles[i]);
         }
 
         turnPlayer = activePlayer = smallestIndex;
@@ -156,6 +158,7 @@ public class Game {
         }
 
         board.placeTile(tile);
+        board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
         return true;
     }
 
@@ -299,6 +302,8 @@ public class Game {
             if (observer != null) {
                 observer.notifyPlayerUpdate(players[turnPlayer]);
                 observer.notifyChangeStocks(stockList.getAllStocks());
+
+                board.forEachTile(tile -> observer.notifyTilePlaced(tile));
             }
         }
         catch (FileNotFoundException ex) {
