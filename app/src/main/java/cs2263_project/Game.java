@@ -296,8 +296,10 @@ public class Game {
             turnPlayer = state.turnPlayer;
             activePlayer = state.activePlayer;
 
-            if (observer != null)
+            if (observer != null) {
                 observer.notifyPlayerUpdate(players[turnPlayer]);
+                observer.notifyChangeStocks(stockList.getAllStocks());
+            }
         }
         catch (FileNotFoundException ex) {
             throw new RuntimeException("Can't find save game file to load");
