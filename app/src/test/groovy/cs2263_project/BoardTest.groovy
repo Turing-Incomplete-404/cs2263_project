@@ -53,7 +53,7 @@ class BoardTest extends Specification {
         thrown(AssertionError)
     }
 
-    void addAllTiles(Tile... tiles) {
+    void addAllTiles(GameBoard board, Tile... tiles) {
         for(Tile t : tiles)
             board.placeTile(t)
     }
