@@ -167,7 +167,9 @@ public class Game {
         }
 
         board.placeTile(tile);
-        board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+
+        if (observer != null)
+            board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
         return true;
     }
 

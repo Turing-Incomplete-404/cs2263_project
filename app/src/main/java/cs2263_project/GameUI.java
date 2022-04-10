@@ -20,6 +20,8 @@ class GameUI implements GameObserver {
     private GridPane grdTiles;
     private GridPane grdPlayerHand;
     private GridPane grdPlayerHandAction;
+    private HBox hbTileAction;
+    private HBox hbStockAction;
     private Label[][] tileGrid;
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
@@ -110,7 +112,7 @@ class GameUI implements GameObserver {
         game = Game.getInstance();
         root = new BorderPane();
         constructGameRoot();
-        gamePhase = 1;
+        gamePhase = 0;
         updateScene(mainGameRoot);
     }
 
@@ -122,10 +124,19 @@ class GameUI implements GameObserver {
         Game game = Game.getInstance();
         Tile A1 = new Tile(0, 0);
         Tile B1 = new Tile(0, 1);
-        Tile B2 = new Tile(1, 1);
+
+        Tile A3 = new Tile(2, 0);
+        Tile B3 = new Tile(2, 1);
+
+        Tile A2merge = new Tile(1, 0);
+
         game.placeTile(A1);
         game.placeTile(B1);
-        game.placeTile(B2);
+
+        game.placeTile(A3);
+        game.placeTile(B3);
+
+        game.placeTile(A2merge);
     }
 
     /**
@@ -160,7 +171,11 @@ class GameUI implements GameObserver {
         mainGameRoot.setCenter(addGameCenter());
         mainGameRoot.setLeft(addGameLeft());
         mainGameRoot.setRight(addGameRight());
-        mainGameRoot.setBottom(addGameBottom());
+
+        hbTileAction = addGameBottomTileAction();
+        hbStockAction = addGameBottomStockAction();
+        mainGameRoot.setBottom(hbTileAction);
+        lblGamePhase.setText("Phase: Placing tile");
     }
 
     private HBox addGameTop() {
@@ -231,23 +246,44 @@ class GameUI implements GameObserver {
         }
     }
 
+    private void advancePhase() {
+        gamePhase = (gamePhase + 1) % 2;
+
+        if (gamePhase == 0) {
+            mainGameRoot.setBottom(hbTileAction);
+            lblGamePhase.setText("Phase: Placing tile");
+        }
+        else {
+            mainGameRoot.setBottom(hbStockAction);
+            lblGamePhase.setText("Phase: Taking action");
+        }
+    }
+
     private void addHandTileButtons(GridPane pane, Player player) {
         pane.getChildren().removeIf(child -> child.getClass() == Button.class);
         List<Tile> tiles = player.getTiles();
 
         for(int i = 0; i < tiles.size(); i++) {
-            Button btn = new Button(tiles.get(i).getTileName());
+            Tile tile = tiles.get(i);
+
+            Button btn = new Button(tile.getTileName());
             btn.setPrefSize(TILE_WIDTH * 1.5, TILE_HEIGHT * 1.5);
             btn.setAlignment(Pos.CENTER);
-            btn.setStyle(getStyle("ButtonTile"));
+
+            if (!game.isTilePlaceable(tile))
+                btn.setStyle(getStyle("ButtonTileUnplaceable"));
+            else if (game.isTileUnplayable(tile))
+                btn.setStyle(getStyle("ButtonTileUnplayable"));
+            else
+                btn.setStyle(getStyle("ButtonTile"));
+
             pane.add(btn, i % 3, (i / 3));
 
-            int finalI = i;
             btn.setOnAction(e -> {
-                Tile tile = tiles.get(finalI);
                 if (game.placeTile(tile)) {
                     pane.getChildren().removeIf(child -> child.getClass() == Button.class && tile.getTileName().equals(((Button)child).getText()));
                     player.removeTile(tile);
+                    advancePhase();
                 }
             });
         }
@@ -317,7 +353,7 @@ class GameUI implements GameObserver {
         return box;
     }
 
-    private HBox addGameBottom() {
+    private HBox addGameBottomTileAction() {
         HBox box = new HBox();
         box.setStyle(getStyle("PaneAction"));
 
@@ -335,6 +371,11 @@ class GameUI implements GameObserver {
         return box;
     }
 
+    private HBox addGameBottomStockAction() {
+        HBox box = new HBox();
+
+        return box;
+    }
 
     @Override
     public void notifyPlayerUpdate(Player player) {
@@ -357,6 +398,11 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyMergeDecision(String option1, String option2, Tile tile) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>();
+        dialog.getDialogPane().setContentText("Which corporation survives the merge?");
+        dialog.getItems().addAll(option1, option2);
+        var result = dialog.showAndWait();
+        result.ifPresent(tile::setCorporation);
     }
 
     @Override
@@ -376,6 +422,7 @@ class GameUI implements GameObserver {
         assert options.length > 0;
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>();
+        dialog.getDialogPane().setContentText("Which corporation would you like to form?");
         dialog.getItems().addAll(options);
         var result = dialog.showAndWait();
         result.ifPresent(tile::setCorporation);
