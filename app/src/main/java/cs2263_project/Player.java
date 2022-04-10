@@ -1,8 +1,6 @@
 package cs2263_project;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -11,11 +9,11 @@ import java.util.TreeMap;
  * This class stores the data and holds the interactive methods for each player
  * @author Eric Hill
  */
-class Player {
+public class Player {
     @Getter private String name;
-    @Getter private Integer dollars = 0;
-    private TreeMap stocks = new TreeMap<String,Integer>();
-    private LinkedList hand = new LinkedList<Tile>();
+    @Getter private Integer dollars = 6000;
+    private TreeMap<String, Integer> stocks = new TreeMap<String,Integer>();
+    private LinkedList<Tile> hand = new LinkedList<Tile>();
 
     public Player(){}
 
@@ -46,7 +44,7 @@ class Player {
      * This method adds to a player's dollar amount
      * @param money
      */
-    public void addDollars(Integer money){
+    public void addDollars(int money){
         dollars += money;
     }
 
@@ -54,7 +52,7 @@ class Player {
      * This method subtracts from a player's dollar amount
      * @param money
      */
-    public void subtractDollars(Integer money){
+    public void subtractDollars(int money){
         dollars -= money;
     }
 
@@ -63,7 +61,7 @@ class Player {
      * @param stock
      * @param value
      */
-    public void addStock(String stock, Integer value){
+    public void addStock(String stock, int value){
         stocks.put(stock,(int)(stocks.get(stock))+value);
     }
 
@@ -72,8 +70,9 @@ class Player {
      * @param stock
      * @param value
      */
-    public void subtractStocks(String stock, Integer value){
-        stocks.put(stock,(int)(stocks.get(stock))-value);
+    public void subtractStocks(String stock, int value) {
+        assert (int)stocks.get(stock) - value >= 0;
+        stocks.put(stock, (Integer)(stocks.get(stock)) - value);
     }
 
     /**
@@ -82,6 +81,6 @@ class Player {
      * @return The number of stocks the player has
      */
     public int stockAmount(String stock) {
-        return (Integer)stocks.get(stock);
+        return (int) stocks.get(stock);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Collections;
  * Holds the list of Tiles to be drawn from and discarded to
  * @author Tyson Cox
  */
-class TileDeque {
+public class TileDeque {
     private final List<Tile> tiles;
 
     TileDeque() {

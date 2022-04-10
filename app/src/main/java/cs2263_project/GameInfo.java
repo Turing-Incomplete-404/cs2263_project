@@ -5,7 +5,7 @@ package cs2263_project;
  * primary and secondary bonuses, and the costs, per size
  * @author Eric Hill
  */
-class GameInfo {
+public class GameInfo {
     private static int[] corpTiers = {1,1,2,2,2,3,3};
     public static String[] Corporations = {"Sackson","Zeta","Hydra","Fusion", "America", "Phoenix","Quantum"};
     private static int[] Brackets = {2,3,4,5,6,11,21,31,41};

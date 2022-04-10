@@ -12,7 +12,7 @@ import java.util.List;
  * @author Tyson Cox
  * @author Eric Hill
  */
-class Game {
+public class Game {
     private Player[] players;
     private TileDeque tileDeque;
     private GameBoard board;
@@ -35,14 +35,11 @@ class Game {
 
 
     /**
-     * Starts a new game
+     * Resets the game to the opening state with an empty board
      * @param playerNames A list of 2-6 names of players participating
      */
-    public void start(@NonNull List<String> playerNames) {
-        if (playerNames.size() < 2 || playerNames.size() > 6) {
-            throw new RuntimeException("A game must have 2-6 players");
-        }
-
+    private void reset(List<String> playerNames) {
+        gameInfo = new GameInfo();
         tileDeque = new TileDeque();
         board = new GameBoard();
         stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
@@ -56,6 +53,18 @@ class Game {
                 players[i].addTile(tileDeque.drawTile());
             }
         }
+    }
+
+    /**
+     * Starts a new game
+     * @param playerNames A list of 2-6 names of players participating
+     */
+    public void start(@NonNull List<String> playerNames) {
+        if (playerNames.size() < 2 || playerNames.size() > 6) {
+            throw new RuntimeException("A game must have 2-6 players");
+        }
+
+        reset(playerNames);
 
         Tile[] startTiles = new Tile[players.length];
         int smallestDist = 0;
@@ -115,8 +124,11 @@ class Game {
                     validCorps.add(corp);
             }
 
-            if (observer != null)
-                observer.notifyFormOption((String[]) validCorps.toArray(), tile);
+            if (observer != null) {
+                String[] array = new String[validCorps.size()];
+                validCorps.toArray(array);
+                observer.notifyFormOption(array, tile);
+            }
         }
 
         if (board.wouldTriggerMerge(tile)) {
@@ -146,23 +158,24 @@ class Game {
     }
 
     public boolean buyStock(@NonNull String stock) {
-        int price = gameInfo.getCost(stock,board.countCorporation(stock));
+        int corpSize = board.countCorporation(stock);
 
-        if (players[activePlayer].getDollars() < price){
-            throw new RuntimeException("Insufficient money to make purchase");
-        }
+        if (corpSize == 0)
+            return false;
 
-        if (stockList.isInStock(stock)) {
-            players[activePlayer].addStock(stock, 1);
-            players[activePlayer].subtractDollars(price);
+        int price = gameInfo.getCost(stock, corpSize);
 
-            if (observer != null)
-                observer.notifyPlayerUpdate(players[activePlayer]);
+        if (players[activePlayer].getDollars() < price || !stockList.isInStock(stock))
+            return false;
 
-            return true;
-        }
+        players[activePlayer].addStock(stock, 1);
+        players[activePlayer].subtractDollars(price);
+        stockList.subtractStock(stock, 1);
 
-        return false;
+        if (observer != null)
+            observer.notifyPlayerUpdate(players[activePlayer]);
+
+        return true;
     }
 
     public boolean isTilePlaceable(@NonNull Tile tile) {
@@ -189,6 +202,11 @@ class Game {
         }
     }
 
+    /**
+     * Trades two of a stock from one corporation for one of another
+     * @param from The corporation to trade from
+     * @param to The corporation to trade to
+     */
     public void tradeStock(@NonNull String from, @NonNull String to) {
         if (players[activePlayer].stockAmount(from) < 2)
             throw new RuntimeException("Player has insufficient stock to trade");
@@ -229,6 +247,7 @@ class Game {
             state.turnPlayer = turnPlayer;
             state.activePlayer = activePlayer;
             new Gson().toJson(state, writer);
+            writer.close();
         }
         catch (IOException ex) {
             throw new RuntimeException("Unable to serialize file with reason: " + ex.getMessage());

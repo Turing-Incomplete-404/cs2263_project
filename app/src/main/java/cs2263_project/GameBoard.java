@@ -10,7 +10,7 @@ import static java.lang.Math.min;
  * collection of behaviours related to managing game board state
  * @author Tyson Cox
  */
-class GameBoard {
+public class GameBoard {
     public static final int WIDTH = 12;
     public static final int HEIGHT = 9;
 
@@ -37,19 +37,19 @@ class GameBoard {
         int x = tile.getX();
         int y = tile.getY();
 
-        List<Tile> neighbors = new ArrayList<>();
+        Set<Tile> neighbors = new HashSet<>();
 
         x = max(0, x - 1);
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
         x = tile.getX();
-        y = min(HEIGHT, y + 1);
+        y = min(HEIGHT - 1, y + 1);
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
         y = tile.getY();
-        x = min(WIDTH, x + 1);
+        x = min(WIDTH - 1, x + 1);
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
@@ -58,7 +58,7 @@ class GameBoard {
         if (board[x][y] != null)
             neighbors.add(board[x][y]);
 
-        return neighbors;
+        return neighbors.stream().toList();
     }
 
     /**
@@ -93,6 +93,10 @@ class GameBoard {
      * @param tile the tile to place
      */
     void placeTile(@NonNull Tile tile) {
+        assert tile.getX() >= 0 && tile.getX() <= WIDTH - 1;
+        assert tile.getY() >= 0 && tile.getY() <= HEIGHT - 1;
+        assert board[tile.getX()][tile.getY()] == null;
+
         if (isTilePlaceable(tile)) {
 
             if (wouldTriggerFormation(tile)) {

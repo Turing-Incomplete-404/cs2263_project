@@ -4,7 +4,7 @@ package cs2263_project;
  * Holds information about the tiles that are held and played
  * @author Tyson Cox
  */
-class Tile {
+public class Tile {
     private final int X;
     private final int Y;
     private String corporation;

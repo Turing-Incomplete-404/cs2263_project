@@ -30,3 +30,9 @@ build
 
 # Ignore jetbrains ides
 .idea
+
+# Ignore eclipese ides
+.project
+
+# Ignore test files
+test_*
