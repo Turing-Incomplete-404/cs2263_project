@@ -206,6 +206,7 @@ class GameTest extends Specification {
         game.tileDeque.tiles.isEmpty() == false
     }
 
+    /*
     def "check buy stock boundary"() {
         given:
         Game game = Game.getInstance()
@@ -218,4 +219,5 @@ class GameTest extends Specification {
         then:
         thrown(RuntimeException)
     }
+     */
 }
