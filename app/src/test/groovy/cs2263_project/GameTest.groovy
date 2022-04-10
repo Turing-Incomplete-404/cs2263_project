@@ -125,6 +125,7 @@ class GameTest extends Specification {
         game.buyStock(corporation)
 
         then:
-        true
+        game.stockList.Stocks.get(corporation) == 24
+        game.players[game.activePlayer].stockAmount(corporation) == 1
     }
 }
