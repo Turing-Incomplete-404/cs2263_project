@@ -158,24 +158,24 @@ public class Game {
     }
 
     public boolean buyStock(@NonNull String stock) {
-        int price = gameInfo.getCost(stock,board.countCorporation(stock));
+        int corpSize = board.countCorporation(stock);
 
-        if (players[activePlayer].getDollars() < price){
-            throw new RuntimeException("Insufficient money to make purchase");
-        }
+        if (corpSize == 0)
+            return false;
 
-        if (stockList.isInStock(stock)) {
-            players[activePlayer].addStock(stock, 1);
-            players[activePlayer].subtractDollars(price);
-            stockList.subtractStock(stock, 1);
+        int price = gameInfo.getCost(stock, corpSize);
 
-            if (observer != null)
-                observer.notifyPlayerUpdate(players[activePlayer]);
+        if (players[activePlayer].getDollars() < price || !stockList.isInStock(stock))
+            return false;
 
-            return true;
-        }
+        players[activePlayer].addStock(stock, 1);
+        players[activePlayer].subtractDollars(price);
+        stockList.subtractStock(stock, 1);
 
-        return false;
+        if (observer != null)
+            observer.notifyPlayerUpdate(players[activePlayer]);
+
+        return true;
     }
 
     public boolean isTilePlaceable(@NonNull Tile tile) {
@@ -202,6 +202,11 @@ public class Game {
         }
     }
 
+    /**
+     * Trades two of a stock from one corporation for one of another
+     * @param from The corporation to trade from
+     * @param to The corporation to trade to
+     */
     public void tradeStock(@NonNull String from, @NonNull String to) {
         if (players[activePlayer].stockAmount(from) < 2)
             throw new RuntimeException("Player has insufficient stock to trade");

@@ -85,6 +85,25 @@ class GameTest extends Specification {
         game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 2
     }
 
+    def "game grants stock on formation"() {
+        given:
+        Game game = Game.getInstance()
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        game.reset(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        Tile A2 = new Tile(1, 0)
+        A2.setCorporation(GameInfo.Corporations[0])
+
+        when:
+        game.placeTile(A1)
+        game.placeTile(A2)
+
+        then:
+        game.board.getCurrentCorporationList().size() == 1
+        game.board.countCorporation(game.board.getCurrentCorporationList().get(0)) == 2
+    }
+
     def "game detects merger"() {
         given:
         Game game = Game.getInstance()
@@ -185,5 +204,18 @@ class GameTest extends Specification {
         game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 1
         game.stockList.Stocks.get(GameInfo.Corporations[0]) == 24
         game.tileDeque.tiles.isEmpty() == false
+    }
+
+    def "check buy stock boundary"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        game.players[game.activePlayer].dollars = 0
+
+        when:
+        game.buyStock(GameInfo.Corporations[0])
+
+        then:
+        thrown(RuntimeException)
     }
 }
