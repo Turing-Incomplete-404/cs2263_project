@@ -4,6 +4,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
+import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec;
 
 class StartUITest extends ApplicationSpec {
@@ -38,6 +39,6 @@ class StartUITest extends ApplicationSpec {
         clickOn(".button")
 
         then:
-        verifyThat('.button', hasText('clicked!'))
+        verifyThat('.button', TestFx.hasText('clicked!'))
     }
 }
