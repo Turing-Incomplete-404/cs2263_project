@@ -82,6 +82,6 @@ public class Player {
      * @return The number of stocks the player has
      */
     public int stockAmount(String stock) {
-        return (Integer)stocks.get(stock);
+        return (int) stocks.get(stock);
     }
 }
