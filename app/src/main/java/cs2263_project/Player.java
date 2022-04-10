@@ -11,7 +11,7 @@ import java.util.TreeMap;
  */
 public class Player {
     @Getter private String name;
-    @Getter private Integer dollars = 0;
+    @Getter private Integer dollars = 6000;
     private TreeMap<String, Integer> stocks = new TreeMap<String,Integer>();
     private LinkedList<Tile> hand = new LinkedList<Tile>();
 
