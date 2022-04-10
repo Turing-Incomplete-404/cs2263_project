@@ -84,16 +84,14 @@ class Game {
         return tileDeque.drawTile();
     }
 
-    public boolean placeTile(Tile tile) {
-        if (!board.isTilePlaceable(tile))
-            return false;
+    // public boolean placeTile(Tile tile) {
+    //     if (!board.isTilePlaceable(tile))
+    //         return false;
+    // }
 
+    // public boolean buyStock(@NonNull String stock) {
 
-    }
-
-    public boolean buyStock(@NonNull String stock) {
-
-    }
+    // }
 
     public boolean isTilePlaceable(@NonNull Tile tile) {
         return board.isTilePlaceable(tile);

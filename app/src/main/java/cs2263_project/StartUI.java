@@ -22,13 +22,13 @@ import java.io.*;
 public class StartUI extends Application {
     private int mainWidth = 500;
     private int mainHeight = 600;
+    private boolean isTitleScreen;
 
-    public StartUI() {}
+    public StartUI() {
+        isTitleScreen = true;
+    }
 
-    @Override
-    public void start(Stage stage) throws Exception{
-        stage.setTitle("Acquire");
-
+    public Scene updateScene() {
         BorderPane border = new BorderPane();
     
         border.setTop(addTop());
@@ -37,16 +37,26 @@ public class StartUI extends Application {
 
         Scene scene = new Scene(border, mainWidth, mainHeight);
 
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case ESCAPE:
-                        stage.close();
-                    default: 
-                }
-            }
-        });
+        return scene;
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception{
+        stage.setTitle("Acquire");
+
+        Scene scene = updateScene();
+
+        // Commented out for the time being.
+        // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        //     @Override
+        //     public void handle(KeyEvent event) {
+        //         switch (event.getCode()) {
+        //             case ESCAPE:
+        //                 stage.close();
+        //             default: 
+        //         }
+        //     }
+        // });
 
         stage.setScene(scene);
         stage.show();
@@ -93,14 +103,14 @@ public class StartUI extends Application {
         centerHBox.setStyle("-fx-border-color: #000; -fx-border-width: 3;-fx-background-color: " + centerColor);
         centerHBox.setAlignment(Pos.CENTER);
 
-        VBox optionsBox = new VBox();
-        optionsBox.setSpacing(10);
-        optionsBox.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
-        optionsBox.setAlignment(Pos.CENTER);
-        optionsBox.setPrefSize(mainWidth - (mainWidth * 0.5), mainHeight - (mainHeight * 0.5));
+        VBox firstMenuBox = new VBox();
+        firstMenuBox.setSpacing(10);
+        firstMenuBox.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
+        firstMenuBox.setAlignment(Pos.CENTER);
+        firstMenuBox.setPrefSize(mainWidth - (mainWidth * 0.5), mainHeight - (mainHeight * 0.5));
 
-        double buttonWidth = (optionsBox.getPrefWidth() - (optionsBox.getPrefWidth() * 0.1));
-        double buttonHeight = (optionsBox.getPrefHeight() - (optionsBox.getPrefHeight() * 0.95));
+        double buttonWidth = (firstMenuBox.getPrefWidth() - (firstMenuBox.getPrefWidth() * 0.1));
+        double buttonHeight = (firstMenuBox.getPrefHeight() - (firstMenuBox.getPrefHeight() * 0.95));
         String buttonStyle = "-fx-focus-color: transparent;-fx-faint-focus-color: transparent; -fx-border-color: #000; -fx-border-width: 2; -fx-border-insets: 3;-fx-font: normal bold 28px 'sansserif' ";
         
         Button newGameButton = new Button("New Game");
@@ -115,11 +125,24 @@ public class StartUI extends Application {
         loadGameButton.setStyle(buttonStyle);
         exitButton.setStyle(buttonStyle);
 
-        // Set sizes
-        testButton.setPrefSize(100, 20);
+        VBox secondMenuBox = new VBox();
+        secondMenuBox.setSpacing(10);
+        secondMenuBox.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
+        secondMenuBox.setAlignment(Pos.CENTER);
+        secondMenuBox.setPrefSize(mainWidth - (mainWidth * 0.75), mainHeight - (mainHeight * 0.5));
+
+        if (isTitleScreen) {
+            centerHBox.getChildren().addAll(firstMenuBox);
+        }
+        else {
+            centerHBox.getChildren().addAll(secondMenuBox);
+        }
+        firstMenuBox.getChildren().addAll(newGameButton, loadGameButton, exitButton);
         
-        optionsBox.getChildren().addAll(newGameButton, loadGameButton, exitButton);
-        centerHBox.getChildren().addAll(optionsBox);
+        newGameButton.setOnAction((ActionEvent changeMenu) -> {
+            isTitleScreen = false;
+            updateScene();
+        });
 
         return centerHBox;
     }
