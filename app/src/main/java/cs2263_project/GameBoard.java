@@ -127,6 +127,16 @@ public class GameBoard {
                 board[tile.getX()][tile.getY()] = tile;
             }
             else {
+                List<Tile> neighbors = getNeighbors(tile);
+                Set<String> corps = new HashSet<>();
+                for(Tile t : neighbors)
+                    corps.add(t.getCorporation());
+
+                assert corps.size() <= 1;
+
+                if (corps.size() == 1)
+                    tile.setCorporation(corps.iterator().next());
+
                 board[tile.getX()][tile.getY()] = tile;
             }
         }

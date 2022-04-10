@@ -133,6 +133,15 @@ public class Game {
                 validCorps.toArray(array);
                 observer.notifyFormOption(array, tile);
             }
+
+            assert tile.getCorporation() != null;
+            players[turnPlayer].addStock(tile.getCorporation(), 1);
+            stockList.subtractStock(tile.getCorporation(), 1);
+
+            if (observer != null) {
+                observer.notifyPlayerUpdate(players[turnPlayer]);
+                observer.notifyChangeStocks(stockList.getAllStocks());
+            }
         }
 
         if (board.wouldTriggerMerge(tile)) {
