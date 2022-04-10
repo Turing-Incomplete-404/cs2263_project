@@ -86,6 +86,17 @@ class GameUI implements GameObserver {
         }
     }
 
+    public GameUI() {
+        root = new BorderPane();
+        constructGameRoot();
+        constructStockChoice();
+        updateScene(mainGameRoot);
+    }
+
+    public BorderPane getRoot() {
+        return root;
+    }
+
     /**
      * Generate the jfx css code for a control category
      * @param category the category of control to generate the code for
@@ -111,20 +122,20 @@ class GameUI implements GameObserver {
         root.setCenter(node);
     }
 
-    public GameUI() {
-        root = new BorderPane();
+    private void constructGameRoot() {
         mainGameRoot = new BorderPane();
-
-        mainGameRoot.setTop(addTop());
-        mainGameRoot.setCenter(addCenter());
-        mainGameRoot.setLeft(addLeft());
-        mainGameRoot.setRight(addRight());
-        mainGameRoot.setBottom(addBottom());
-
-        updateScene(mainGameRoot);
+        mainGameRoot.setTop(addGameTop());
+        mainGameRoot.setCenter(addGameCenter());
+        mainGameRoot.setLeft(addGameLeft());
+        mainGameRoot.setRight(addGameRight());
+        mainGameRoot.setBottom(addGameBottom());
     }
 
-    HBox addTop() {
+    private void constructStockChoice() {
+        stockChooserRoot = new BorderPane();
+    }
+
+    private HBox addGameTop() {
         HBox topbox = new HBox(50);
         topbox.setPadding(new Insets(PANEL_SPACING));
         HBox lefttopbox = new HBox();
@@ -148,7 +159,7 @@ class GameUI implements GameObserver {
         return topbox;
     }
 
-    GridPane addCenter() {
+    private GridPane addGameCenter() {
         grdTiles = new GridPane();
         grdTiles.setPadding(new Insets(PANEL_SPACING));
         grdTiles.setStyle(getStyle("GridGameBoard"));
@@ -190,7 +201,7 @@ class GameUI implements GameObserver {
         }
     }
 
-    private VBox addLeft() {
+    private VBox addGameLeft() {
         VBox box = new VBox();
         box.setPadding(new Insets(PANEL_SPACING));
         lblPlayerStocks = new HashMap<>();
@@ -224,7 +235,7 @@ class GameUI implements GameObserver {
         return box;
     }
 
-    VBox addRight() {
+    private VBox addGameRight() {
         VBox box = new VBox();
         box.setPadding(new Insets(PANEL_SPACING));
         box.setSpacing(10);
@@ -252,14 +263,14 @@ class GameUI implements GameObserver {
         return box;
     }
 
-    HBox addBottom() {
+    private HBox addGameBottom() {
         HBox box = new HBox();
 
         return box;
     }
 
-    public BorderPane getRoot() {
-        return root;
+    private String chooseMerge(String option1, String option2) {
+        return option1;
     }
 
     @Override
@@ -282,7 +293,8 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyMergeDecision(String option1, String option2, Tile tile) {
-
+        updateScene(stockChooserRoot);
+        tile.setCorporation(chooseMerge(option1, option2));
     }
 
     @Override
