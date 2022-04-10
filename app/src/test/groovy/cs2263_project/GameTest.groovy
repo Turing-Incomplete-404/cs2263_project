@@ -14,6 +14,7 @@ class GameTest extends Specification {
         game.start(players)
 
         then:
-        game.players[0].getName().equals("Bob") && game.players[1].getName().equals("Joe")
+        game.players[0].getName().equals("Bob")
+        game.players[1].getName().equals("Joe")
     }
 }
