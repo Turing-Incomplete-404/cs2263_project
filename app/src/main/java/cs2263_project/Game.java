@@ -31,6 +31,9 @@ public class Game {
         private static final Game INSTANCE = new Game();
     }
 
+    /**
+     * @return the game class's singleton instance
+     */
     public static Game getInstance() {
         return SingletonHolder.INSTANCE;
     }

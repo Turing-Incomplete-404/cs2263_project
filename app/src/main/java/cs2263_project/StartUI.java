@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Contains the UI components related to starting and loading games
  * @author Scott Brown
  * @author Tyson Cox
  */

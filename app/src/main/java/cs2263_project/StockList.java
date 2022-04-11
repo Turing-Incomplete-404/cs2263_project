@@ -54,11 +54,6 @@ class StockList {
      * @return the stock map
      */
     public Map<String, Integer> getAllStocks() {
-        Map<String, Integer> res = new HashMap<>();
-        for(String corp : stocks.keySet()) {
-            res.put(corp, stocks.get(corp));
-        }
-
-        return res;
+        return new HashMap<>(stocks);
     }
 }
