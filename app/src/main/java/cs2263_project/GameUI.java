@@ -1,5 +1,6 @@
 package cs2263_project;
 
+import javafx.application.Platform;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -126,20 +127,6 @@ class GameUI implements GameObserver {
 
     public BorderPane getRoot() {
         return root;
-    }
-
-    void addAllTiles(Tile... tiles) {
-        for(Tile t : tiles) {
-            Game.getInstance().placeTile(t);
-        }
-    }
-    void debug() {
-        addAllTiles(
-                new Tile(0, 0), //1A
-                new Tile(1, 0), //2A,
-                new Tile(3, 0), //3A,
-                new Tile(2, 0)
-        );
     }
 
     /**
@@ -442,7 +429,24 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyStockDecision(Player player, String fromCorp, String toCorp) {
+        ChoiceDialog<String> stockDecisionDialog = new ChoiceDialog<>();
+        stockDecisionDialog.getItems().addAll("Sell", "Hold Remaining");
 
+        if (player.stockAmount(fromCorp) >= 2)
+            stockDecisionDialog.getItems().add("Trade 2");
+
+        while(player.stockAmount(fromCorp) > 0) {
+            stockDecisionDialog.setContentText(String.format("Player: %s\nWinner: %s\nLoser: %s\nYou have %d remaining", player.getName(), toCorp, fromCorp, player.stockAmount(fromCorp)));
+            var result = stockDecisionDialog.showAndWait();
+            if (result.isPresent()) {
+                if (result.get().equals("Sell"))
+                    game.sellStock(fromCorp);
+                else if (result.get().equals("Hold Remaining"))
+                    break;
+                else if (result.get().equals("Trade 2"))
+                    game.tradeStock(fromCorp, toCorp);
+            }
+        }
     }
 
     @Override
@@ -463,7 +467,44 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyGameEnd(String[] names, Integer[] dollars) {
+        BorderPane winScreen = new BorderPane();
 
+        HBox titlebox = new HBox();
+        titlebox.setAlignment(Pos.CENTER);
+        titlebox.setPadding(new Insets(30));
+
+        Label winTitle = new Label(String.format("%s wins!", names[0]));
+        titlebox.getChildren().add(winTitle);
+
+        GridPane scores = new GridPane();
+        scores.gridLinesVisibleProperty().setValue(true);
+        scores.setVgap(10);
+        scores.setHgap(50);
+        scores.setAlignment(Pos.CENTER);
+        scores.setPadding(new Insets(10, 100, 10, 100));
+
+        scores.add(new Label("Player"), 0, 0);
+        scores.add(new Label("Score"), 1, 0);
+
+        for(int i = 0; i < names.length; i++) {
+            scores.add(new Label(names[i]), 0, i + 1);
+            scores.add(new Label(String.format("$%d", dollars[i])), 1, i + 1);
+        }
+
+        HBox buttonHolder = new HBox();
+        buttonHolder.setPadding(new Insets(10, 100, 10, 100));
+        buttonHolder.setAlignment(Pos.CENTER);
+
+        Button endGame = new Button("Okay!");
+        buttonHolder.getChildren().add(endGame);
+
+        endGame.setOnAction(e -> Platform.exit());
+
+        winScreen.setTop(titlebox);
+        winScreen.setCenter(scores);
+        winScreen.setBottom(buttonHolder);
+
+        updateScene(winScreen);
     }
 
     @Override

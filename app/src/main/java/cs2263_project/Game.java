@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -111,6 +112,20 @@ public class Game {
 
     }
 
+    private void signalGameEnd() {
+        String[] names = new String[players.length];
+        Integer[] dollars = new Integer[players.length];
+
+        Arrays.sort(players);
+
+        for(int i = 0; i < players.length; i++) {
+            names[i] = players[i].getName();
+            dollars[i] = players[i].getDollars();
+        }
+
+        observer.notifyGameEnd(names, dollars);
+    }
+
     /**
      * Plays a tile to the game board
      * @param tile The tile to place
@@ -165,8 +180,9 @@ public class Game {
 
             assert tile.getCorporation() != null;
 
-            String from = tile.getCorporation().equals(options.get(0)) ? options.get(1) : options.get(0);
-            String to = tile.getCorporation().equals(options.get(1)) ? options.get(0) : options.get(1);
+            String to = tile.getCorporation();
+            String from = to.equals(options.get(0)) ? options.get(1) : options.get(0);
+
 
             int start = activePlayer;
             for(int id = activePlayer; id < players.length + start; id++) {
@@ -182,6 +198,11 @@ public class Game {
 
         if (observer != null)
             board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+
+        List<String> formedCorporations = board.getCurrentCorporationList();
+        for(String corp : formedCorporations)
+            if (board.countCorporation(corp) >= 41)
+                signalGameEnd();
 
         return true;
     }

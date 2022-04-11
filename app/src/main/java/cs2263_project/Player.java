@@ -11,7 +11,7 @@ import java.util.TreeMap;
  * This class stores the data and holds the interactive methods for each player
  * @author Eric Hill
  */
-public class Player {
+public class Player implements Comparable<Player> {
     @Getter private String name;
     @Getter private Integer dollars = 6000;
     private TreeMap<String, Integer> stocks = new TreeMap<String,Integer>();
@@ -88,5 +88,10 @@ public class Player {
 
     public List<Tile> getTiles() {
         return new ArrayList<>(hand);
+    }
+
+    @Override
+    public int compareTo(Player player) {
+        return player.getDollars().compareTo(dollars);
     }
 }
