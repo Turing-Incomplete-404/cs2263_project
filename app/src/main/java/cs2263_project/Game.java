@@ -149,8 +149,19 @@ public class Game {
             List<String> options = board.getMergeOptions(tile);
             assert options.size() >= 2;
 
-            if (observer != null)
-                observer.notifyMergeDecision(options.get(0), options.get(1), tile);
+            int size1 = board.countCorporation(options.get(0));
+            int size2 = board.countCorporation(options.get(1));
+
+            if (size1 == size2) {
+                if (observer != null)
+                    observer.notifyMergeDecision(options.get(0), options.get(1), tile);
+            }
+            else {
+                if (size1 > size2)
+                    tile.setCorporation(options.get(0));
+                else
+                    tile.setCorporation(options.get(1));
+            }
 
             assert tile.getCorporation() != null;
 
@@ -171,6 +182,7 @@ public class Game {
 
         if (observer != null)
             board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+
         return true;
     }
 

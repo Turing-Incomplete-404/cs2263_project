@@ -106,9 +106,8 @@ public class GameBoard {
                 for(Tile neighbor : neighbors) {
                     Set<Tile> chain = getWholeChain(neighbor);
 
-                    for(Tile corpTile : chain) {
+                    for(Tile corpTile : chain)
                         corpTile.setCorporation(tile.getCorporation());
-                    }
                 }
 
                 board[tile.getX()][tile.getY()] = tile;
@@ -130,9 +129,10 @@ public class GameBoard {
                 List<Tile> neighbors = getNeighbors(tile);
                 Set<String> corps = new HashSet<>();
                 for(Tile t : neighbors)
-                    corps.add(t.getCorporation());
+                    if (t.getCorporation() != null)
+                        corps.add(t.getCorporation());
 
-                assert corps.size() <= 1;
+                assert (corps.size() <= 1);
 
                 if (corps.size() == 1) {
                     String corporationToSet = corps.iterator().next();
