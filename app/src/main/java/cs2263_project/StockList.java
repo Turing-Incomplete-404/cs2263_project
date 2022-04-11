@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * This class keeps track of the stocks "on the board", that have
+ * not been bought/awarded yet.
  * @author Eric Hill
  * @author Tyson Cox
  */
