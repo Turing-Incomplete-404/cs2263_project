@@ -183,7 +183,7 @@ class GameUI implements GameObserver {
 
         Button menu = new Button();
         menu.setText("Menu");
-        menu.setOnAction(e -> debug());
+        //menu.setOnAction(e -> debug());
 
         lefttopbox.getChildren().add(lblPlayerTurn);
         centertopbox.getChildren().add(lblGamePhase);
