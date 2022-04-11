@@ -25,7 +25,6 @@ public class Game {
 
     private Game() { }
 
-    /*
     private static class SingletonHolder {
         private static final Game INSTANCE = new Game();
     }
@@ -33,14 +32,12 @@ public class Game {
     public static Game getInstance() {
         return SingletonHolder.INSTANCE;
     }
-     */
 
 
     /**
      * Resets the game to the opening state with an empty board
      * @param playerNames A list of 2-6 names of players participating
      */
-    /*
     private void reset(List<String> playerNames) {
         gameInfo = new GameInfo();
         tileDeque = new TileDeque();
@@ -57,13 +54,11 @@ public class Game {
             }
         }
     }
-     */
 
     /**
      * Starts a new game
      * @param playerNames A list of 2-6 names of players participating
      */
-    /*
     public void start(@NonNull List<String> playerNames) {
         if (playerNames.size() < 2 || playerNames.size() > 6) {
             throw new RuntimeException("A game must have 2-6 players");
@@ -99,56 +94,6 @@ public class Game {
             observer.notifyPlayerUpdate(players[turnPlayer]);
         }
 
-    }
-    */
-
-    public Game(List<String> playerNames) {
-        if (playerNames.size() < 2 || playerNames.size() > 6) {
-            throw new RuntimeException("A game must have 2-6 players");
-        }
-
-        gameInfo = new GameInfo();
-        tileDeque = new TileDeque();
-        board = new GameBoard();
-        stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
-        turnPlayer = 0;
-        activePlayer = 0;
-
-        players = new Player[playerNames.size()];
-        for(int i = 0; i < playerNames.size(); i++) {
-            players[i] = new Player(playerNames.get(i), GameInfo.Corporations);
-            for(int j = 0; j < 6; j++) {
-                players[i].addTile(tileDeque.drawTile());
-            }
-        }
-
-        Tile[] startTiles = new Tile[players.length];
-        int smallestDist = 0;
-        int smallestIndex = 0;
-
-        for(int i = 0; i < startTiles.length; i++) {
-            startTiles[i] = tileDeque.drawTile();
-            int dist = startTiles[i].getX() + startTiles[i].getY();
-
-            if (dist < smallestDist) {
-                smallestDist = dist;
-                smallestIndex = i;
-            }
-            else if (dist == smallestDist && startTiles[i].getX() < startTiles[smallestIndex].getX()) {
-                smallestIndex = i;
-            }
-
-            board.placeTile(startTiles[i]);
-            if (observer != null)
-                observer.notifyTilePlaced(startTiles[i]);
-        }
-
-        turnPlayer = activePlayer = smallestIndex;
-
-        if (observer != null) {
-            observer.notifyChangeStocks(stockList.getAllStocks());
-            observer.notifyPlayerUpdate(players[turnPlayer]);
-        }
     }
 
     /**

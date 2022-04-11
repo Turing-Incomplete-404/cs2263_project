@@ -108,9 +108,8 @@ class GameUI implements GameObserver {
         }
     }
 
-    public GameUI(Game game) {
-        //game = Game.getInstance();
-        this.game = game;
+    public GameUI() {
+        game = Game.getInstance();
         root = new BorderPane();
         constructGameRoot();
         gamePhase = 0;
@@ -122,6 +121,7 @@ class GameUI implements GameObserver {
     }
 
     void debug() {
+        Game game = Game.getInstance();
         Tile A1 = new Tile(0, 0);
         Tile B1 = new Tile(0, 1);
 

@@ -68,6 +68,9 @@ public class StartUI extends Application {
         stage.setAlwaysOnTop(true);
         stage.setAlwaysOnTop(false);
 
+        game = Game.getInstance();
+        gameUI = new GameUI();
+        game.registerObserver(gameUI);
     }
 
     private void buildMenu1() {
@@ -282,9 +285,7 @@ public class StartUI extends Application {
             }
         }
 
-        game = new Game(players);
-        gameUI = new GameUI(game);
-        game.registerObserver(gameUI);
+        game.start(players);
         updateScene(gameUI.getRoot());
         stage.sizeToScene();
     }
