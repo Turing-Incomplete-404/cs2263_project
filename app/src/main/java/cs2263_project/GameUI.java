@@ -27,6 +27,8 @@ class GameUI implements GameObserver {
     private Map<String, Label> lblStockList;
 
     private int gamePhase;
+    private int stocksBought;
+    private List<String> currentCorporations;
 
     /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
@@ -113,6 +115,7 @@ class GameUI implements GameObserver {
         root = new BorderPane();
         constructGameRoot();
         gamePhase = 0;
+        currentCorporations = new ArrayList<>();
         updateScene(mainGameRoot);
     }
 
@@ -252,6 +255,7 @@ class GameUI implements GameObserver {
         if (gamePhase == 0) {
             mainGameRoot.setBottom(hbTileAction);
             lblGamePhase.setText("Phase: Placing tile");
+            stocksBought = 0;
         }
         else {
             mainGameRoot.setBottom(hbStockAction);
@@ -371,8 +375,52 @@ class GameUI implements GameObserver {
         return box;
     }
 
+    private void popupMessage(String title, String message) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setContentText(message);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.showAndWait();
+    }
+
     private HBox addGameBottomStockAction() {
         HBox box = new HBox();
+        box.setSpacing(20);
+        box.setStyle(getStyle("PaneAction"));
+
+        Button buyStock = new Button("Buy Stock");
+
+        ChoiceDialog<String> buydialog = new ChoiceDialog<>();
+
+        buyStock.setOnAction(e -> {
+            if (stocksBought < 3) {
+                buydialog.getItems().clear();
+                buydialog.getItems().addAll(currentCorporations);
+                buydialog.getItems().add("I changed my mind!");
+
+                var result = buydialog.showAndWait();
+
+                if (result.isPresent() && !result.get().equals("I changed my mind!")) {
+                    if (game.buyStock(result.get()))
+                        stocksBought++;
+                    else
+                        popupMessage("Failed to buy", "Unable to purchase stock in " + result.get());
+
+                }
+            }
+            else {
+                popupMessage("Invalid action", "You may only buy up to 3 stocks per turn");
+            }
+        });
+
+
+        Button endTurn = new Button("End Turn");
+        endTurn.setOnAction(e -> {
+            advancePhase();
+            game.drawTile();
+        });
+
+        box.getChildren().addAll(buyStock, endTurn);
 
         return box;
     }
@@ -402,7 +450,14 @@ class GameUI implements GameObserver {
         dialog.getDialogPane().setContentText("Which corporation survives the merge?");
         dialog.getItems().addAll(option1, option2);
         var result = dialog.showAndWait();
-        result.ifPresent(tile::setCorporation);
+
+        if (result.isPresent()) {
+            String win = result.get();
+            tile.setCorporation(win);
+            String toRemove = win.equals(option1) ? option2 : option1;
+
+            currentCorporations.remove(toRemove);
+        }
     }
 
     @Override
@@ -425,7 +480,12 @@ class GameUI implements GameObserver {
         dialog.getDialogPane().setContentText("Which corporation would you like to form?");
         dialog.getItems().addAll(options);
         var result = dialog.showAndWait();
-        result.ifPresent(tile::setCorporation);
+
+        if (result.isPresent()) {
+            String win = result.get();
+            tile.setCorporation(win);
+            currentCorporations.add(win);
+        }
     }
 
     @Override

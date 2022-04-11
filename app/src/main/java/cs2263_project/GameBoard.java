@@ -134,8 +134,17 @@ public class GameBoard {
 
                 assert corps.size() <= 1;
 
-                if (corps.size() == 1)
-                    tile.setCorporation(corps.iterator().next());
+                if (corps.size() == 1) {
+                    String corporationToSet = corps.iterator().next();
+                    tile.setCorporation(corporationToSet);
+
+                    for (Tile t : neighbors) {
+                        var chain = getWholeChain(t);
+                        for (Tile c : chain) {
+                            c.setCorporation(corporationToSet);
+                        }
+                    }
+                }
 
                 board[tile.getX()][tile.getY()] = tile;
             }
@@ -207,6 +216,7 @@ public class GameBoard {
      */
     boolean wouldTriggerMerge(@NonNull Tile tile) {
         List<Tile> neighbors = getNeighbors(tile);
+
         if (neighbors.size() >= 2) {
             Set<String> corpnames = new HashSet<>();
 
@@ -219,7 +229,7 @@ public class GameBoard {
                 if (countCorporation(s) >= CORPORATION_SAFE_SIZE)
                     safeCorps++;
 
-            return safeCorps < 2;
+            return corpnames.size() >= 2 && safeCorps < 2;
         }
 
         return false;

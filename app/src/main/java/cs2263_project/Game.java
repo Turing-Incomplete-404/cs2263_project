@@ -97,17 +97,18 @@ public class Game {
     }
 
     /**
-     * Draws a tile from the tile deque and ends the turn
-     * @return the drawn tile
+     * Draws a tile from the tile deque, inserts it into the turn player's hand, and ends the turn
      */
-    public Tile drawTile() {
+    public void drawTile() {
+        if (players[turnPlayer].getTiles().size() < 6)
+            players[turnPlayer].addTile(tileDeque.drawTile());
+
         turnPlayer = (turnPlayer + 1) % players.length;
         activePlayer = turnPlayer;
 
         if (observer != null)
             observer.notifyPlayerUpdate(players[activePlayer]);
 
-        return tileDeque.drawTile();
     }
 
     /**
