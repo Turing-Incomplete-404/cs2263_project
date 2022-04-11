@@ -33,10 +33,10 @@ public class TileDeque {
     }
 
     /**
-     * Insert a tile at the bottom of the deque
+     * Insert a tile at the top of the deque
      * @param tile The tile to add
      */
     public void addTile(Tile tile) {
-        tiles.add(tile);
+        tiles.add(0,tile);
     }
 }
