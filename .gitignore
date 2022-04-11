@@ -33,9 +33,11 @@ build
 
 # Ignore eclipese ides
 .project
+.settings
 
 # Ignore test files
 test_*
 
 # Ignore vscode files
 .vscode
+
