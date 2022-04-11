@@ -139,6 +139,20 @@ class GameTest extends Specification {
             game.placeTile(t)
     }
 
+    def "check game resets correctly"() {
+        given:
+        String corporation = GameInfo.Corporations[0]
+        Game game = Game.getInstance()
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        game.reset(get2GamePlayers())
+
+        expect:
+        game.stockList.stocks.get(corporation) == 25
+        game.players[game.activePlayer].stockAmount(corporation) == 0
+        game.players[0].dollars == 6000
+    }
+
     def "check game buy stock"() {
         given:
         String corporation = GameInfo.Corporations[0]
@@ -153,8 +167,8 @@ class GameTest extends Specification {
         game.buyStock(corporation)
 
         then:
-        game.stockList.stocks.get(corporation) == 24
-        game.players[game.activePlayer].stockAmount(corporation) == 1
+        game.stockList.stocks.get(corporation) == 23
+        game.players[game.activePlayer].stockAmount(corporation) == 2
         game.players[0].dollars == 6000 - game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
     }
 
@@ -167,7 +181,6 @@ class GameTest extends Specification {
         Tile A2 = new Tile(1, 0)
         A2.setCorporation(corporation)
         addAllTiles(game, A1, A2)
-        game.buyStock(corporation)
 
         when:
         game.sellStock(corporation)
@@ -175,7 +188,7 @@ class GameTest extends Specification {
         then:
         game.stockList.stocks.get(corporation) == 25
         game.players[game.activePlayer].stockAmount(corporation) == 0
-        game.players[0].dollars == 6000
+        game.players[0].dollars == 6000 + game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
     }
 
     def "check game saving"() {
@@ -206,8 +219,8 @@ class GameTest extends Specification {
         game.board.board[0][0] != null && GameInfo.Corporations[0].equals(game.board.board[0][0].getCorporation())
         game.players.length == 2
         game.players[game.activePlayer].dollars != 6000
-        game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 1
-        game.stockList.stocks.get(GameInfo.Corporations[0]) == 24
+        game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 2
+        game.stockList.stocks.get(GameInfo.Corporations[0]) == 23
         game.tileDeque.tiles.isEmpty() == false
     }
 
