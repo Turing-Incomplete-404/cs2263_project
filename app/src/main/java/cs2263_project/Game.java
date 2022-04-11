@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * This class keeps track of all of the game-logic and is responsible for
+ * holding and communicating changes to all of the data classes
  * @author Tyson Cox
  * @author Eric Hill
  */
@@ -204,6 +205,11 @@ public class Game {
         return true;
     }
 
+    /**
+     * Has the active player purchase a stock
+     * @param stock - which corporation the player is buying a stock from
+     * @return - success of purchase
+     */
     public boolean buyStock(@NonNull String stock) {
         int corpSize = board.countCorporation(stock);
 
