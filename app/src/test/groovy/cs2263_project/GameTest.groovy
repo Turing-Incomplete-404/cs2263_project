@@ -238,4 +238,39 @@ class GameTest extends Specification {
         thrown(RuntimeException)
     }
      */
+
+    def "check trade stocks"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Player player = game.players[game.activePlayer]
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        player.addStock(GameInfo.Corporations[0],5)
+
+        when:
+        game.tradeStock(GameInfo.Corporations[0],GameInfo.Corporations[1])
+
+        then:
+        player.stockAmount(GameInfo.Corporations[0]) == 3
+        player.stockAmount(GameInfo.Corporations[1]) == 1
+        game.stockList.stocks.get(GameInfo.Corporations[0]) == 27
+        game.stockList.stocks.get(GameInfo.Corporations[1]) == 24
+    }
+
+    def "check drawTile"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        game.tileDeque.addTile(A1)
+        Player player = game.players[game.activePlayer]
+        player.hand.remove(5)
+
+        when:
+        game.drawTile()
+
+        then:
+        player.hand[5] == A1
+    }
 }
