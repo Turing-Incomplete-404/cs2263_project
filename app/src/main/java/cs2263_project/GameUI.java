@@ -135,11 +135,10 @@ class GameUI implements GameObserver {
     }
     void debug() {
         addAllTiles(
-                new Tile(2, 1), //3B
-                new Tile(2, 0), //3A
-                new Tile(3, 2), //4C
-                new Tile(4, 1), //5B
-                new Tile(3, 1) //4B - the bad one
+                new Tile(0, 0), //1A
+                new Tile(1, 0), //2A,
+                new Tile(3, 0), //3A,
+                new Tile(2, 0)
         );
     }
 
