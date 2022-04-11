@@ -1,6 +1,6 @@
 package cs2263_project
 
-import lombok.NonNull
+
 import spock.lang.Specification
 
 class GameTest extends Specification {
@@ -30,6 +30,11 @@ class GameTest extends Specification {
             formOptionCalled = true
             assert options.length > 0
             tile.setCorporation(options[0])
+        }
+
+        @Override
+        void notifyTilePlaced(Tile tile) {
+
         }
     }
 
@@ -134,6 +139,20 @@ class GameTest extends Specification {
             game.placeTile(t)
     }
 
+    def "check game resets correctly"() {
+        given:
+        String corporation = GameInfo.Corporations[0]
+        Game game = Game.getInstance()
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        game.reset(get2GamePlayers())
+
+        expect:
+        game.stockList.stocks.get(corporation) == 25
+        game.players[game.activePlayer].stockAmount(corporation) == 0
+        game.players[0].dollars == 6000
+    }
+
     def "check game buy stock"() {
         given:
         String corporation = GameInfo.Corporations[0]
@@ -148,8 +167,8 @@ class GameTest extends Specification {
         game.buyStock(corporation)
 
         then:
-        game.stockList.Stocks.get(corporation) == 24
-        game.players[game.activePlayer].stockAmount(corporation) == 1
+        game.stockList.stocks.get(corporation) == 23
+        game.players[game.activePlayer].stockAmount(corporation) == 2
         game.players[0].dollars == 6000 - game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
     }
 
@@ -162,15 +181,14 @@ class GameTest extends Specification {
         Tile A2 = new Tile(1, 0)
         A2.setCorporation(corporation)
         addAllTiles(game, A1, A2)
-        game.buyStock(corporation)
 
         when:
         game.sellStock(corporation)
 
         then:
-        game.stockList.Stocks.get(corporation) == 25
+        game.stockList.stocks.get(corporation) == 25
         game.players[game.activePlayer].stockAmount(corporation) == 0
-        game.players[0].dollars == 6000
+        game.players[0].dollars == 6000 + game.gameInfo.getCost(corporation, game.board.countCorporation(corporation))
     }
 
     def "check game saving"() {
@@ -201,8 +219,8 @@ class GameTest extends Specification {
         game.board.board[0][0] != null && GameInfo.Corporations[0].equals(game.board.board[0][0].getCorporation())
         game.players.length == 2
         game.players[game.activePlayer].dollars != 6000
-        game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 1
-        game.stockList.Stocks.get(GameInfo.Corporations[0]) == 24
+        game.players[game.activePlayer].stockAmount(GameInfo.Corporations[0]) == 2
+        game.stockList.stocks.get(GameInfo.Corporations[0]) == 23
         game.tileDeque.tiles.isEmpty() == false
     }
 
@@ -220,4 +238,39 @@ class GameTest extends Specification {
         thrown(RuntimeException)
     }
      */
+
+    def "check trade stocks"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Player player = game.players[game.activePlayer]
+        var observerStub = new GameObserverStub()
+        game.registerObserver(observerStub)
+        player.addStock(GameInfo.Corporations[0],5)
+
+        when:
+        game.tradeStock(GameInfo.Corporations[0],GameInfo.Corporations[1])
+
+        then:
+        player.stockAmount(GameInfo.Corporations[0]) == 3
+        player.stockAmount(GameInfo.Corporations[1]) == 1
+        game.stockList.stocks.get(GameInfo.Corporations[0]) == 27
+        game.stockList.stocks.get(GameInfo.Corporations[1]) == 24
+    }
+
+    def "check drawTile"() {
+        given:
+        Game game = Game.getInstance()
+        game.reset(get2GamePlayers())
+        Tile A1 = new Tile(0, 0)
+        game.tileDeque.addTile(A1)
+        Player player = game.players[game.activePlayer]
+        player.hand.remove(5)
+
+        when:
+        game.drawTile()
+
+        then:
+        player.hand[5] == A1
+    }
 }

@@ -12,7 +12,7 @@ class StockListTest extends Specification {
         stocklist.subtractStock(corporation, 1)
 
         then:
-        stocklist.Stocks.get(corporation) == 24
+        stocklist.stocks.get(corporation) == 24
     }
 
     def "check stocklist isInStock"() {
@@ -35,7 +35,7 @@ class StockListTest extends Specification {
         stocklist.addStock(corporation, 2)
 
         then:
-        stocklist.Stocks.get(corporation) == 22
+        stocklist.stocks.get(corporation) == 22
     }
 
     def "check stocklist constructor and add/subtract"() {
@@ -47,8 +47,8 @@ class StockListTest extends Specification {
         stocklist.subtractStock("corp3", 59)
 
         then:
-        stocklist.Stocks.get("corp1") == 68
-        stocklist.Stocks.get("corp2") == 69
-        stocklist.Stocks.get("corp3") == 10
+        stocklist.stocks.get("corp1") == 68
+        stocklist.stocks.get("corp2") == 69
+        stocklist.stocks.get("corp3") == 10
     }
 }

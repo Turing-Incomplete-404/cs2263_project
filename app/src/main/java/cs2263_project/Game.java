@@ -5,10 +5,12 @@ import lombok.NonNull;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * This class keeps track of all of the game-logic and is responsible for
+ * holding and communicating changes to all of the data classes
  * @author Tyson Cox
  * @author Eric Hill
  */
@@ -29,6 +31,9 @@ public class Game {
         private static final Game INSTANCE = new Game();
     }
 
+    /**
+     * @return the game class's singleton instance
+     */
     public static Game getInstance() {
         return SingletonHolder.INSTANCE;
     }
@@ -83,27 +88,32 @@ public class Game {
             }
 
             board.placeTile(startTiles[i]);
+            if (observer != null)
+                observer.notifyTilePlaced(startTiles[i]);
         }
 
         turnPlayer = activePlayer = smallestIndex;
 
-        if (observer != null)
+        if (observer != null) {
+            observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[turnPlayer]);
+        }
 
     }
 
     /**
-     * Draws a tile from the tile deque and ends the turn
-     * @return the drawn tile
+     * Draws a tile from the tile deque, inserts it into the turn player's hand, and ends the turn
      */
-    public Tile drawTile() {
+    public void drawTile() {
+        if (players[turnPlayer].getTiles().size() < 6)
+            players[turnPlayer].addTile(tileDeque.drawTile());
+
         turnPlayer = (turnPlayer + 1) % players.length;
         activePlayer = turnPlayer;
 
         if (observer != null)
             observer.notifyPlayerUpdate(players[activePlayer]);
 
-        return tileDeque.drawTile();
     }
 
     /**
@@ -129,19 +139,40 @@ public class Game {
                 validCorps.toArray(array);
                 observer.notifyFormOption(array, tile);
             }
+
+            assert tile.getCorporation() != null;
+            players[turnPlayer].addStock(tile.getCorporation(), 1);
+            stockList.subtractStock(tile.getCorporation(), 1);
+
+            if (observer != null) {
+                observer.notifyPlayerUpdate(players[turnPlayer]);
+                observer.notifyChangeStocks(stockList.getAllStocks());
+            }
         }
 
         if (board.wouldTriggerMerge(tile)) {
             List<String> options = board.getMergeOptions(tile);
             assert options.size() >= 2;
 
-            if (observer != null)
-                observer.notifyMergeDecision(options.get(0), options.get(1), tile);
+            int size1 = board.countCorporation(options.get(0));
+            int size2 = board.countCorporation(options.get(1));
+
+            if (size1 == size2) {
+                if (observer != null)
+                    observer.notifyMergeDecision(options.get(0), options.get(1), tile);
+            }
+            else {
+                if (size1 > size2)
+                    tile.setCorporation(options.get(0));
+                else
+                    tile.setCorporation(options.get(1));
+            }
 
             assert tile.getCorporation() != null;
 
-            String from = tile.getCorporation().equals(options.get(0)) ? options.get(1) : options.get(0);
-            String to = tile.getCorporation().equals(options.get(1)) ? options.get(0) : options.get(1);
+            String to = tile.getCorporation();
+            String from = to.equals(options.get(0)) ? options.get(1) : options.get(0);
+
 
             int start = activePlayer;
             for(int id = activePlayer; id < players.length + start; id++) {
@@ -154,9 +185,34 @@ public class Game {
         }
 
         board.placeTile(tile);
+
+        if (observer != null)
+            board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+
+        List<String> formedCorporations = board.getCurrentCorporationList();
+        for(String corp : formedCorporations)
+            if (board.countCorporation(corp) >= 41) {
+                String[] names = new String[players.length];
+                Integer[] dollars = new Integer[players.length];
+
+                Arrays.sort(players);
+
+                for(int i = 0; i < players.length; i++) {
+                    names[i] = players[i].getName();
+                    dollars[i] = players[i].getDollars();
+                }
+
+                observer.notifyGameEnd(names, dollars);
+            }
+
         return true;
     }
 
+    /**
+     * Has the active player purchase a stock
+     * @param stock - which corporation the player is buying a stock from
+     * @return - success of purchase
+     */
     public boolean buyStock(@NonNull String stock) {
         int corpSize = board.countCorporation(stock);
 
@@ -172,20 +228,36 @@ public class Game {
         players[activePlayer].subtractDollars(price);
         stockList.subtractStock(stock, 1);
 
-        if (observer != null)
+        if (observer != null) {
+            observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[activePlayer]);
+        }
 
         return true;
     }
 
+    /**
+     * Checks whether a tile can currently be played
+     * @param tile the tile to check
+     * @return whether the tile can be played
+     */
     public boolean isTilePlaceable(@NonNull Tile tile) {
         return board.isTilePlaceable(tile);
     }
 
+    /**
+     * Checks whether a tile can ever be played
+     * @param tile the tile to check
+     * @return whether the tile can ever be played
+     */
     public boolean isTileUnplayable(@NonNull Tile tile) {
         return board.isTileUnplayable(tile);
     }
 
+    /**
+     * Sell a stock from the active player's hand
+     * @param stock the corporation to sell stock of
+     */
     public void sellStock(@NonNull String stock) {
         if (players[activePlayer].stockAmount(stock) <= 0)
             throw new RuntimeException("Player has insufficient stock to sell");
@@ -197,8 +269,10 @@ public class Game {
             players[activePlayer].addDollars(price);
             stockList.addStock(stock, 1);
 
-            if (observer != null)
+            if (observer != null) {
+                observer.notifyChangeStocks(stockList.getAllStocks());
                 observer.notifyPlayerUpdate(players[activePlayer]);
+            }
         }
     }
 
@@ -217,6 +291,11 @@ public class Game {
 
             players[activePlayer].addStock(to, 1);
             stockList.subtractStock(to, 1);
+
+            if (observer != null) {
+                observer.notifyChangeStocks(stockList.getAllStocks());
+                observer.notifyPlayerUpdate(players[activePlayer]);
+            }
         }
     }
 
@@ -271,14 +350,22 @@ public class Game {
             turnPlayer = state.turnPlayer;
             activePlayer = state.activePlayer;
 
-            if (observer != null)
+            if (observer != null) {
                 observer.notifyPlayerUpdate(players[turnPlayer]);
+                observer.notifyChangeStocks(stockList.getAllStocks());
+
+                board.forEachTile(tile -> observer.notifyTilePlaced(tile));
+            }
         }
         catch (FileNotFoundException ex) {
             throw new RuntimeException("Can't find save game file to load");
         }
     }
 
+    /**
+     * Register a game-state observer to get notifications about changes in game state
+     * @param observer the observer to register
+     */
     public void registerObserver(@NonNull GameObserver observer) {
         this.observer = observer;
         if (players != null && players.length != 0)

@@ -15,6 +15,10 @@ public class Tile {
         corporation = null;
     }
 
+    /**
+     * Get the string representation of a tile's coordinates
+     * @return string representation of a tile's coordinates
+     */
     public String getTileName() {
         char letter = 'A';
         letter += Y;

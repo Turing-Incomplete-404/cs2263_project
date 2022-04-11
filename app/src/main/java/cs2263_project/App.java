@@ -5,8 +5,11 @@ package cs2263_project;
 
 import javafx.application.Application;
 
+/**
+ * The entry point of the application. Only contains main and launches the StartUI
+ * @author Scott Brown
+ */
 public class App {
-
     public static void main(String[] args) {
         StartUI mainMenu = new StartUI();
 

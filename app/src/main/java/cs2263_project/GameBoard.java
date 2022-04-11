@@ -106,9 +106,8 @@ public class GameBoard {
                 for(Tile neighbor : neighbors) {
                     Set<Tile> chain = getWholeChain(neighbor);
 
-                    for(Tile corpTile : chain) {
+                    for(Tile corpTile : chain)
                         corpTile.setCorporation(tile.getCorporation());
-                    }
                 }
 
                 board[tile.getX()][tile.getY()] = tile;
@@ -127,6 +126,26 @@ public class GameBoard {
                 board[tile.getX()][tile.getY()] = tile;
             }
             else {
+                List<Tile> neighbors = getNeighbors(tile);
+                Set<String> corps = new HashSet<>();
+                for(Tile t : neighbors)
+                    if (t.getCorporation() != null)
+                        corps.add(t.getCorporation());
+
+                assert (corps.size() <= 1);
+
+                if (corps.size() == 1) {
+                    String corporationToSet = corps.iterator().next();
+                    tile.setCorporation(corporationToSet);
+
+                    for (Tile t : neighbors) {
+                        var chain = getWholeChain(t);
+                        for (Tile c : chain) {
+                            c.setCorporation(corporationToSet);
+                        }
+                    }
+                }
+
                 board[tile.getX()][tile.getY()] = tile;
             }
         }
@@ -159,7 +178,7 @@ public class GameBoard {
      * @return whether the tile is placeable
      */
     boolean isTilePlaceable(@NonNull Tile tile) {
-        return !isTileUnplayable(tile) && currentCorporationCount < GameInfo.Corporations.length;
+        return !isTileUnplayable(tile) && !(wouldTriggerFormation(tile) && currentCorporationCount >= GameInfo.Corporations.length);
     }
 
     /**
@@ -197,6 +216,7 @@ public class GameBoard {
      */
     boolean wouldTriggerMerge(@NonNull Tile tile) {
         List<Tile> neighbors = getNeighbors(tile);
+
         if (neighbors.size() >= 2) {
             Set<String> corpnames = new HashSet<>();
 
@@ -209,7 +229,7 @@ public class GameBoard {
                 if (countCorporation(s) >= CORPORATION_SAFE_SIZE)
                     safeCorps++;
 
-            return safeCorps < 2;
+            return corpnames.size() >= 2 && safeCorps < 2;
         }
 
         return false;
@@ -270,5 +290,21 @@ public class GameBoard {
             return new ArrayList<String>();
         else
             return corps.stream().toList();
+    }
+
+    /**
+     * Defines a function that accepts a tile - for the purpose of passing a lambda
+     */
+    public interface TileIterator { void func(Tile tile); }
+
+    /**
+     * Calls a function on every tile in the board
+     * @param iterator A function or lambda to call on the tiles
+     */
+    public void forEachTile(TileIterator iterator) {
+        for (int x = 0; x < WIDTH; x++)
+            for (int y = 0; y < HEIGHT; y++)
+                if (board[x][y] != null)
+                    iterator.func(board[x][y]);
     }
 }
