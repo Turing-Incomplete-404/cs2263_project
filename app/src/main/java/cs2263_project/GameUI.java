@@ -53,6 +53,8 @@ class GameUI implements GameObserver {
      * CorporationKeyColor(corp name) - the corporation color key block
      * FilledTile(corp name) - a Tile of the board filled with a given corporation
      * ButtonTile - buttons that place the tiles
+     * ButtonTileUnplaceable - buttons for tiles that can't be played right now
+     * ButtonTileUnplayable - buttons for tiles that can't ever be played
      * PaneBoard, PaneTitle, PanePlayer, PaneStocks, PaneAction - the background panes
      */
     static {
@@ -70,6 +72,9 @@ class GameUI implements GameObserver {
 
         borderThickness.put("PaneAction", "15 15 15 15");
         borderColors.put(   "PaneAction", "#000000");
+
+        fillColors.put("ButtonTileUnplaceable", "#FF0000");
+        fillColors.put("ButtonTileUnplayable", "#FF0000");
 
         fillColors.put(     "EmptyTile", "#F1F1F1");
         borderColors.put(   "EmptyTile", "#000000");
@@ -123,23 +128,19 @@ class GameUI implements GameObserver {
         return root;
     }
 
+    void addAllTiles(Tile... tiles) {
+        for(Tile t : tiles) {
+            Game.getInstance().placeTile(t);
+        }
+    }
     void debug() {
-        Game game = Game.getInstance();
-        Tile A1 = new Tile(0, 0);
-        Tile B1 = new Tile(0, 1);
-
-        Tile A3 = new Tile(2, 0);
-        Tile B3 = new Tile(2, 1);
-
-        Tile A2merge = new Tile(1, 0);
-
-        game.placeTile(A1);
-        game.placeTile(B1);
-
-        game.placeTile(A3);
-        game.placeTile(B3);
-
-        game.placeTile(A2merge);
+        addAllTiles(
+                new Tile(2, 1), //3B
+                new Tile(2, 0), //3A
+                new Tile(3, 2), //4C
+                new Tile(4, 1), //5B
+                new Tile(3, 1) //4B - the bad one
+        );
     }
 
     /**
@@ -386,6 +387,7 @@ class GameUI implements GameObserver {
     private HBox addGameBottomStockAction() {
         HBox box = new HBox();
         box.setSpacing(20);
+        box.setPadding(new Insets(PANEL_SPACING));
         box.setStyle(getStyle("PaneAction"));
 
         Button buyStock = new Button("Buy Stock");

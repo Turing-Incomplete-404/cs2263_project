@@ -178,7 +178,7 @@ public class GameBoard {
      * @return whether the tile is placeable
      */
     boolean isTilePlaceable(@NonNull Tile tile) {
-        return !isTileUnplayable(tile) && currentCorporationCount < GameInfo.Corporations.length;
+        return !isTileUnplayable(tile) && !(wouldTriggerFormation(tile) && currentCorporationCount >= GameInfo.Corporations.length);
     }
 
     /**
