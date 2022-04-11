@@ -6,7 +6,6 @@ package cs2263_project;
 import javafx.application.Application;
 
 public class App {
-
     public static void main(String[] args) {
         StartUI mainMenu = new StartUI();
 
