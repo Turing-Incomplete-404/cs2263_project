@@ -56,7 +56,7 @@ javafx {
 }
 
 license {
-    header = project.file('LICENSE')
+    header = project.file('../LICENSE')
 }
 
 testing {
