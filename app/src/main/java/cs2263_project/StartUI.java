@@ -69,7 +69,7 @@ public class StartUI extends Application {
         stage.setAlwaysOnTop(false);
 
         game = Game.getInstance();
-        gameUI = new GameUI();
+        gameUI = new GameUI(stage);
         game.registerObserver(gameUI);
     }
 

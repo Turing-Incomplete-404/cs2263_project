@@ -292,7 +292,15 @@ public class GameBoard {
             return corps.stream().toList();
     }
 
+    /**
+     * Defines a function that accepts a tile - for the purpose of passing a lambda
+     */
     public interface TileIterator { void func(Tile tile); }
+
+    /**
+     * Calls a function on every tile in the board
+     * @param iterator A function or lambda to call on the tiles
+     */
     public void forEachTile(TileIterator iterator) {
         for (int x = 0; x < WIDTH; x++)
             for (int y = 0; y < HEIGHT; y++)

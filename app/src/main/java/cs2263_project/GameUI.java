@@ -5,11 +5,20 @@ import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.*;
 
+/**
+ * A roughshod implementation of the ui related to managing the game state
+ * @author Tyson Cox
+ */
 class GameUI implements GameObserver {
     private final Game game;
+
+    private Stage stage;
 
     private BorderPane root;
 
@@ -26,6 +35,8 @@ class GameUI implements GameObserver {
     private Label[][] tileGrid;
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
+
+    private BorderPane menuRoot;
 
     private int gamePhase;
     private int stocksBought;
@@ -44,7 +55,7 @@ class GameUI implements GameObserver {
     private static final Map<String, String> fonts = new HashMap<>();
 
 
-    /*
+    /* TODO: this stuff needs exported to an external file and read in
      * Control categories: [] indicates an optional addition, while () a mandatory one
      *
      * EmptyTile - a Tile of the board that is empty
@@ -116,15 +127,21 @@ class GameUI implements GameObserver {
         }
     }
 
-    public GameUI() {
+    public GameUI(Stage stage) {
         game = Game.getInstance();
+        this.stage = stage;
         root = new BorderPane();
+        constructMenuRoot();
         constructGameRoot();
         gamePhase = 0;
         currentCorporations = new ArrayList<>();
         updateScene(mainGameRoot);
     }
 
+    /**
+     * Get the root element of this ui
+     * @return the root element of this ui
+     */
     public BorderPane getRoot() {
         return root;
     }
@@ -150,11 +167,18 @@ class GameUI implements GameObserver {
         return result;
     }
 
+    /**
+     * Swap this scene for a different one
+     * @param node The container to swap to
+     */
     private void updateScene(Node node) {
         root.getChildren().clear();
         root.setCenter(node);
     }
 
+    /**
+     * Construct the ui related to the main game screen
+     */
     private void constructGameRoot() {
         mainGameRoot = new BorderPane();
         mainGameRoot.setTop(addGameTop());
@@ -168,13 +192,79 @@ class GameUI implements GameObserver {
         lblGamePhase.setText("Phase: Placing tile");
     }
 
-    private HBox addGameTop() {
-        HBox topbox = new HBox(50);
+    /**
+     * Construct the ui related to the pause/options menu
+     */
+    private void constructMenuRoot() {
+        menuRoot = new BorderPane();
+        VBox controls = new VBox();
+        controls.setAlignment(Pos.CENTER);
+        controls.setPadding(new Insets(10, 100, 10, 100));
+        controls.setSpacing(25);
+
+        Button save = new Button("Save");
+        Button quit = new Button("Quit");
+        Button back = new Button("Back");
+
+        save.setOnAction(e -> {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Save");
+            chooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Save files", "*.json"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+
+            File savefile = chooser.showSaveDialog(stage);
+            if (savefile == null)
+                return;
+
+            if (savefile.exists()) {
+                Dialog<ButtonType> sure = new Dialog<>();
+                sure.setTitle("Are you sure?");
+                sure.setContentText("Are you sure you want to overwrite your old save?");
+                sure.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+                var res = sure.showAndWait();
+                if (!res.isPresent() || res.get() == ButtonType.NO) {
+                    return;
+                }
+            }
+
+            game.save(savefile.getPath());
+        });
+
+        quit.setOnAction(e -> {
+            Dialog<ButtonType> sure = new Dialog<>();
+            sure.setTitle("Are you sure?");
+            sure.setContentText("Are you sure you want to exit the game?");
+            sure.getDialogPane().getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+            var res = sure.showAndWait();
+            if (res.isPresent() && res.get() == ButtonType.YES) {
+                Platform.exit();
+            }
+        });
+
+        back.setOnAction(e -> {
+            updateScene(mainGameRoot);
+        });
+
+        controls.getChildren().addAll(save, quit, back);
+        menuRoot.setCenter(controls);
+    }
+
+    /**
+     * Construct the top panel of the game screen
+     * @return the top panel of the game screen
+     */
+    private BorderPane addGameTop() {
+        BorderPane topbox = new BorderPane();
         topbox.setStyle(getStyle("PaneTitle"));
         topbox.setPadding(new Insets(PANEL_SPACING));
         HBox lefttopbox = new HBox();
         HBox centertopbox = new HBox();
         HBox righttopbox = new HBox();
+        lefttopbox.setAlignment(Pos.CENTER);
+        centertopbox.setAlignment(Pos.CENTER);
+        righttopbox.setAlignment(Pos.CENTER);
 
         lblPlayerTurn = new Label("Turn: Null");
         lblGamePhase = new Label("Phase: Null");
@@ -183,17 +273,23 @@ class GameUI implements GameObserver {
 
         Button menu = new Button();
         menu.setText("Menu");
-        menu.setOnAction(e -> debug());
+        menu.setOnAction(e -> updateScene(menuRoot));
 
         lefttopbox.getChildren().add(lblPlayerTurn);
         centertopbox.getChildren().add(lblGamePhase);
         righttopbox.getChildren().add(menu);
 
-        topbox.getChildren().addAll(lefttopbox, centertopbox, righttopbox);
+        topbox.setLeft(lefttopbox);
+        topbox.setCenter(centertopbox);
+        topbox.setRight(righttopbox);
 
         return topbox;
     }
 
+    /**
+     * Construct the center panel (board) of the game screen
+     * @return the center panel of the game screen
+     */
     private GridPane addGameCenter() {
         grdTiles = new GridPane();
         grdTiles.setStyle(getStyle("PaneBoard"));
@@ -222,6 +318,11 @@ class GameUI implements GameObserver {
         return grdTiles;
     }
 
+    /**
+     * Utility method - adds all tiles from a players hand to a gridpane as labels
+     * @param pane the pane to add to
+     * @param player the player to read the hand from
+     */
     private void addHandTiles(GridPane pane, Player player) {
         pane.getChildren().clear();
         List<Tile> tiles = player.getTiles();
@@ -236,6 +337,9 @@ class GameUI implements GameObserver {
         }
     }
 
+    /**
+     * Advance the phase of the game (play a tile / take an action)
+     */
     private void advancePhase() {
         gamePhase = (gamePhase + 1) % 2;
 
@@ -250,6 +354,11 @@ class GameUI implements GameObserver {
         }
     }
 
+    /**
+     * Utility method - add the tiles of a players hand to a gridpane as buttons that play the tiles
+     * @param pane the pane to add to
+     * @param player the player to read the hand of
+     */
     private void addHandTileButtons(GridPane pane, Player player) {
         pane.getChildren().removeIf(child -> child.getClass() == Button.class);
         List<Tile> tiles = player.getTiles();
@@ -280,6 +389,10 @@ class GameUI implements GameObserver {
         }
     }
 
+    /**
+     * Construct the left pane of the game screen
+     * @return the left pane of the game screen
+     */
     private VBox addGameLeft() {
         VBox box = new VBox();
         box.setStyle(getStyle("PanePlayer"));
@@ -315,6 +428,10 @@ class GameUI implements GameObserver {
         return box;
     }
 
+    /**
+     * Construct the right pane of the game screen
+     * @return the right pane of the game screen
+     */
     private VBox addGameRight() {
         VBox box = new VBox();
         box.setStyle(getStyle("PaneStocks"));
@@ -344,6 +461,10 @@ class GameUI implements GameObserver {
         return box;
     }
 
+    /**
+     * Construct one of the two bottom panels of the game screen
+     * @return the tile panel of the game screen
+     */
     private HBox addGameBottomTileAction() {
         HBox box = new HBox();
         box.setStyle(getStyle("PaneAction"));
@@ -362,6 +483,11 @@ class GameUI implements GameObserver {
         return box;
     }
 
+    /**
+     * Utility method - pops up a dialog with some text
+     * @param title the title of the dialog
+     * @param message the text of the dialog
+     */
     private void popupMessage(String title, String message) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(title);
@@ -370,6 +496,10 @@ class GameUI implements GameObserver {
         dialog.showAndWait();
     }
 
+    /**
+     * Construct one of the two bottom panels of the game screen
+     * @return the stock / end turn panel
+     */
     private HBox addGameBottomStockAction() {
         HBox box = new HBox();
         box.setSpacing(20);
