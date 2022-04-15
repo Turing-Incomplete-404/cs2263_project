@@ -47,6 +47,7 @@ public class Game {
 
     private int turnPlayer;
     private int activePlayer;
+    private int gamePhase;
 
     private Game() { }
 
@@ -73,6 +74,7 @@ public class Game {
         stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
         turnPlayer = 0;
         activePlayer = 0;
+        gamePhase = 0;
 
         players = new Player[playerNames.size()];
         for(int i = 0; i < playerNames.size(); i++) {
@@ -120,6 +122,7 @@ public class Game {
         if (observer != null) {
             observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[turnPlayer]);
+            observer.notifyGamePhaseChanged(gamePhase);
         }
 
     }
@@ -133,10 +136,12 @@ public class Game {
 
         turnPlayer = (turnPlayer + 1) % players.length;
         activePlayer = turnPlayer;
+        gamePhase = 0;
 
-        if (observer != null)
+        if (observer != null) {
             observer.notifyPlayerUpdate(players[activePlayer]);
-
+            observer.notifyGamePhaseChanged(gamePhase);
+        }
     }
 
     /**
@@ -208,25 +213,30 @@ public class Game {
         }
 
         board.placeTile(tile);
+        gamePhase = 1;
 
-        if (observer != null)
+        if (observer != null) {
             board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+            observer.notifyGamePhaseChanged(gamePhase);
+        }
 
         List<String> formedCorporations = board.getCurrentCorporationList();
-        for(String corp : formedCorporations)
+        for(String corp : formedCorporations) {
             if (board.countCorporation(corp) >= 41) {
                 String[] names = new String[players.length];
                 Integer[] dollars = new Integer[players.length];
 
                 Arrays.sort(players);
 
-                for(int i = 0; i < players.length; i++) {
+                for (int i = 0; i < players.length; i++) {
                     names[i] = players[i].getName();
                     dollars[i] = players[i].getDollars();
                 }
 
                 observer.notifyGameEnd(names, dollars);
             }
+
+        }
 
         return true;
     }
@@ -330,6 +340,7 @@ public class Game {
         GameInfo gameInfo;
         int turnPlayer;
         int activePlayer;
+        int gamePhase;
     }
 
     /**
@@ -348,6 +359,7 @@ public class Game {
             state.gameInfo = gameInfo;
             state.turnPlayer = turnPlayer;
             state.activePlayer = activePlayer;
+            state.gamePhase = gamePhase;
             new Gson().toJson(state, writer);
             writer.close();
         }
@@ -372,10 +384,12 @@ public class Game {
             gameInfo = state.gameInfo;
             turnPlayer = state.turnPlayer;
             activePlayer = state.activePlayer;
+            gamePhase = state.gamePhase;
 
             if (observer != null) {
                 observer.notifyPlayerUpdate(players[turnPlayer]);
                 observer.notifyChangeStocks(stockList.getAllStocks());
+                observer.notifyGamePhaseChanged(gamePhase);
 
                 board.forEachTile(tile -> observer.notifyTilePlaced(tile));
             }

@@ -79,4 +79,9 @@ interface GameObserver {
      * @param tile the tile that has changed
      */
     void notifyTilePlaced(Tile tile);
+
+    /**
+     *
+     */
+    void notifyGamePhaseChanged(int phase);
 }

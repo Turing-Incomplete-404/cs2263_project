@@ -36,6 +36,11 @@ class GameTest extends Specification {
         void notifyTilePlaced(Tile tile) {
 
         }
+
+        @Override
+        void notifyGamePhaseChanged(int phase) {
+
+        }
     }
 
     List<String> get2GamePlayers() {

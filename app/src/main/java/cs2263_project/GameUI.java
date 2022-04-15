@@ -61,7 +61,6 @@ class GameUI implements GameObserver {
 
     private BorderPane menuRoot;
 
-    private int gamePhase;
     private int stocksBought;
     private List<String> currentCorporations;
 
@@ -156,7 +155,6 @@ class GameUI implements GameObserver {
         root = new BorderPane();
         constructMenuRoot();
         constructGameRoot();
-        gamePhase = 0;
         currentCorporations = new ArrayList<>();
         updateScene(mainGameRoot);
     }
@@ -211,8 +209,7 @@ class GameUI implements GameObserver {
 
         hbTileAction = addGameBottomTileAction();
         hbStockAction = addGameBottomStockAction();
-        mainGameRoot.setBottom(hbTileAction);
-        lblGamePhase.setText("Phase: Placing tile");
+        lblGamePhase.setText("Phase: Null");
     }
 
     /**
@@ -361,23 +358,6 @@ class GameUI implements GameObserver {
     }
 
     /**
-     * Advance the phase of the game (play a tile / take an action)
-     */
-    private void advancePhase() {
-        gamePhase = (gamePhase + 1) % 2;
-
-        if (gamePhase == 0) {
-            mainGameRoot.setBottom(hbTileAction);
-            lblGamePhase.setText("Phase: Placing tile");
-            stocksBought = 0;
-        }
-        else {
-            mainGameRoot.setBottom(hbStockAction);
-            lblGamePhase.setText("Phase: Taking action");
-        }
-    }
-
-    /**
      * Utility method - add the tiles of a players hand to a gridpane as buttons that play the tiles
      * @param pane the pane to add to
      * @param player the player to read the hand of
@@ -406,7 +386,6 @@ class GameUI implements GameObserver {
                 if (game.placeTile(tile)) {
                     pane.getChildren().removeIf(child -> child.getClass() == Button.class && tile.getTileName().equals(((Button)child).getText()));
                     player.removeTile(tile);
-                    advancePhase();
                 }
             });
         }
@@ -557,7 +536,6 @@ class GameUI implements GameObserver {
 
         Button endTurn = new Button("End Turn");
         endTurn.setOnAction(e -> {
-            advancePhase();
             game.drawTile();
         });
 
@@ -691,5 +669,15 @@ class GameUI implements GameObserver {
             tileGrid[tile.getX()][tile.getY()].setStyle(getStyle("FilledTile"));
     }
 
-
+    @Override
+    public void notifyGamePhaseChanged(int phase) {
+        if (phase == 0) {
+            mainGameRoot.setBottom(hbTileAction);
+            lblGamePhase.setText("Game Phase: Placing tile");
+        }
+        else {
+            mainGameRoot.setBottom(hbStockAction);
+            lblGamePhase.setText("Game Phase: Taking action");
+        }
+    }
 }
