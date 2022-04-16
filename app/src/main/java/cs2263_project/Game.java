@@ -149,7 +149,7 @@ public class Game {
      * @param tile The tile to place
      * @return Whether the placement was successful
      */
-    public boolean placeTile(Tile tile) {
+    public boolean placeTile(Player player, Tile tile) {
         if (!board.isTilePlaceable(tile))
             return false;
 
@@ -213,6 +213,7 @@ public class Game {
         }
 
         board.placeTile(tile);
+        player.removeTile(tile);
         gamePhase = 1;
 
         if (observer != null) {
