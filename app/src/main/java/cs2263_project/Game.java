@@ -217,7 +217,9 @@ public class Game {
 
         if (observer != null) {
             board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+            observer.notifyPlayerUpdate(players[turnPlayer]);
             observer.notifyGamePhaseChanged(gamePhase);
+            observer.notifyChangeStocks(stockList.getAllStocks());
         }
 
         List<String> formedCorporations = board.getCurrentCorporationList();
@@ -239,6 +241,27 @@ public class Game {
         }
 
         return true;
+    }
+
+    /**
+     * Get the list of currently formed corporations
+     * @return The list of currently formed corporations
+     */
+    public List<String> getCurrentCorporations() {
+        return board.getCurrentCorporationList();
+    }
+
+    /**
+     * Get the current price of a given corporation
+     * @param corp The corporation to check
+     * @return the price of the corporation, or -1 if not formed
+     */
+    public int getCurrentCorporationCost(String corp) {
+        var corps = board.getCurrentCorporationList();
+        if (corps.contains(corp))
+            return gameInfo.getCost(corp, board.countCorporation(corp));
+        else
+            return -1;
     }
 
     /**

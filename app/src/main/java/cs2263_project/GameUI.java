@@ -58,11 +58,11 @@ class GameUI implements GameObserver {
     private Label[][] tileGrid;
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
+    private Map<String, Label> lblStockPriceList;
 
     private BorderPane menuRoot;
 
     private int stocksBought;
-    private List<String> currentCorporations;
 
     /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
@@ -155,7 +155,6 @@ class GameUI implements GameObserver {
         root = new BorderPane();
         constructMenuRoot();
         constructGameRoot();
-        currentCorporations = new ArrayList<>();
         updateScene(mainGameRoot);
     }
 
@@ -440,6 +439,7 @@ class GameUI implements GameObserver {
         box.setPadding(new Insets(PANEL_SPACING));
         box.setSpacing(10);
         lblStockList = new HashMap<>();
+        lblStockPriceList = new HashMap<>();
 
         Label lblCorpStats = new Label("Corporation Stats");
         lblCorpStats.setStyle(getStyle("CorporationsInfoHeader"));
@@ -447,17 +447,28 @@ class GameUI implements GameObserver {
         box.getChildren().add(lblCorpStats);
 
         for(String corp : GameInfo.Corporations) {
+            VBox corpbox = new VBox();
+
             HBox titlebox = new HBox(5);
             Label colorlabel = new Label("   ");
             colorlabel.setStyle(getStyle(String.format("CorporationKeyColor%s", corp)));
 
-            Label namelabel = new Label(corp + ": ???");
+            Label namelabel = new Label(corp);
             namelabel.setStyle(getStyle("CorporationsInfo"));
+
+            Label countlabel = new Label("    Qty: ???");
+            countlabel.setStyle(getStyle("CorporationsInfo"));
+
+            Label costlabel = new Label("    Cost: ???");
+            costlabel.setStyle(getStyle("CorporationsInfo"));
 
             titlebox.getChildren().addAll(colorlabel, namelabel);
 
-            box.getChildren().add(titlebox);
-            lblStockList.put(corp, namelabel);
+            corpbox.getChildren().addAll(titlebox, countlabel, costlabel);
+
+            box.getChildren().add(corpbox);
+            lblStockList.put(corp, countlabel);
+            lblStockPriceList.put(corp, costlabel);
         }
 
         return box;
@@ -515,7 +526,7 @@ class GameUI implements GameObserver {
         buyStock.setOnAction(e -> {
             if (stocksBought < 3) {
                 buydialog.getItems().clear();
-                buydialog.getItems().addAll(currentCorporations);
+                buydialog.getItems().addAll(game.getCurrentCorporations());
                 buydialog.getItems().add("I changed my mind!");
 
                 var result = buydialog.showAndWait();
@@ -590,9 +601,6 @@ class GameUI implements GameObserver {
         if (result.isPresent()) {
             String win = result.get();
             tile.setCorporation(win);
-            String toRemove = win.equals(option1) ? option2 : option1;
-
-            currentCorporations.remove(toRemove);
         }
     }
 
@@ -641,7 +649,15 @@ class GameUI implements GameObserver {
     @Override
     public void notifyChangeStocks(Map<String, Integer> param) {
         for(String corp : param.keySet()) {
-            lblStockList.get(corp).setText(String.format("%s: %d", corp, param.get(corp)));
+            lblStockList.get(corp).setText(String.format("    QTY: %d", param.get(corp)));
+
+            int cost = game.getCurrentCorporationCost(corp);
+            if (cost == -1) {
+                lblStockPriceList.get(corp).setText("    Cost: N/A");
+            }
+            else {
+                lblStockPriceList.get(corp).setText(String.format("    Cost: $%d", game.getCurrentCorporationCost(corp)));
+            }
         }
     }
 
@@ -657,7 +673,6 @@ class GameUI implements GameObserver {
         if (result.isPresent()) {
             String win = result.get();
             tile.setCorporation(win);
-            currentCorporations.add(win);
         }
     }
 
