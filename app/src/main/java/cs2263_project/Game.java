@@ -204,8 +204,9 @@ public class Game {
 
             int start = activePlayer;
             for(int id = activePlayer; id < players.length + start; id++) {
-                if (observer != null)
-                    observer.notifyStockDecision(players[id % players.length], from, to);
+                //TODO: change this to work with the new system
+                //if (observer != null)
+                    //observer.notifyStockDecision(players[id % players.length], from, to);
                 activePlayer = (activePlayer + 1) % players.length;
             }
 

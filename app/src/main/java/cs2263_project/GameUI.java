@@ -569,7 +569,8 @@ class GameUI implements GameObserver {
     }
 
     @Override
-    public void notifyStockDecision(Player player, String fromCorp, String toCorp) {
+    public void notifyStockDecision(Player player, List<String> fromCorps, String toCorp) {
+        /* TODO: reimplement this with the new system
         ChoiceDialog<String> stockDecisionDialog = new ChoiceDialog<>();
         stockDecisionDialog.getItems().addAll("Sell", "Hold Remaining");
 
@@ -588,6 +589,7 @@ class GameUI implements GameObserver {
                     game.tradeStock(fromCorp, toCorp);
             }
         }
+         */
     }
 
     @Override

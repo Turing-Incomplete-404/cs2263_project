@@ -23,6 +23,7 @@
  */
 package cs2263_project;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,10 +41,10 @@ interface GameObserver {
      * Notifies that a player needs to make a decision regarding stock of a corporation that
      * lost a merger
      * @param player the player making the decision
-     * @param fromCorp the corporation going away
+     * @param fromCorps the corporation(s) going away
      * @param toCorp the corporation taking over
      */
-    void notifyStockDecision(Player player, String fromCorp, String toCorp);
+    void notifyStockDecision(Player player, List<String> fromCorps, String toCorp);
 
     /**
      * Notifies that a player must make a decision regarding which corporation wins a merger
@@ -81,7 +82,7 @@ interface GameObserver {
     void notifyTilePlaced(Tile tile);
 
     /**
-     *
+     * Notify that the game
      */
     void notifyGamePhaseChanged(int phase);
 }
