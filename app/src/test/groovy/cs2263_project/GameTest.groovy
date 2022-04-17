@@ -15,7 +15,7 @@ class GameTest extends Specification {
         @Override
         void notifyPlayerUpdate(Player player) { playerUpdateCalled = true }
         @Override
-        void notifyStockDecision(Player player, String fromCorp, String toCorp) { stockDecisionCalled = true }
+        void notifyStockDecision(Player player, List<String> fromCorps, String toCorp) { stockDecisionCalled = true }
         @Override
         void notifyMergeDecision(String option1, String option2, Tile tile) {
             mergeDecisionCalled = true

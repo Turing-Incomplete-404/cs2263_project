@@ -199,14 +199,16 @@ public class Game {
             assert tile.getCorporation() != null;
 
             String to = tile.getCorporation();
-            String from = to.equals(options.get(0)) ? options.get(1) : options.get(0);
+            List<String> fromCorps = new ArrayList<>();
+            for(String corp : options)
+                if (!corp.equals(to))
+                    fromCorps.add(corp);
 
 
             int start = activePlayer;
             for(int id = activePlayer; id < players.length + start; id++) {
-                //TODO: change this to work with the new system
-                //if (observer != null)
-                    //observer.notifyStockDecision(players[id % players.length], from, to);
+                if (observer != null)
+                    observer.notifyStockDecision(players[id % players.length], fromCorps, to);
                 activePlayer = (activePlayer + 1) % players.length;
             }
 
