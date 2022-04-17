@@ -182,6 +182,26 @@ public class Game {
             List<String> options = board.getMergeOptions(tile);
             assert options.size() >= 2;
 
+            //start of Eric's fixes for the merges
+
+            Integer[] sizes = new Integer[options.size()];
+
+            Integer maxSize = 0;
+            for (int i = 0; i < options.size(); i++){
+                Integer size = board.countCorporation(options.get(i));
+                sizes[i] = size;
+                if (size > maxSize) maxSize = size;
+            }
+
+            ArrayList<String> mergeChoices = new ArrayList<>();
+            for (int i = 0; i < options.size(); i++){
+                String corp = board.getMergeOptions(tile).get(i);
+                if (board.countCorporation(corp) == maxSize) mergeChoices.add(corp);
+            }
+
+            //now that we have our maximums, we just need to deal with them
+            //end of Eric's fix for merges
+
             int size1 = board.countCorporation(options.get(0));
             int size2 = board.countCorporation(options.get(1));
 
