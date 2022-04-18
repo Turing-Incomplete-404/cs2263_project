@@ -41,9 +41,9 @@ import java.util.*;
 class GameUI implements GameObserver {
     private final Game game;
 
-    private Stage stage;
+    private final Stage stage;
 
-    private BorderPane root;
+    private final BorderPane root;
 
     private BorderPane mainGameRoot;
     private Label lblPlayerTurn;
@@ -61,8 +61,6 @@ class GameUI implements GameObserver {
     private Map<String, Label> lblStockPriceList;
 
     private BorderPane menuRoot;
-
-    private int stocksBought;
 
     /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
@@ -523,23 +521,15 @@ class GameUI implements GameObserver {
         ChoiceDialog<String> buydialog = new ChoiceDialog<>();
 
         buyStock.setOnAction(e -> {
-            if (stocksBought < 3) {
-                buydialog.getItems().clear();
-                buydialog.getItems().addAll(game.getCurrentCorporations());
-                buydialog.getItems().add("I changed my mind!");
+            buydialog.getItems().clear();
+            buydialog.getItems().addAll(game.getCurrentCorporations());
+            buydialog.getItems().add("I changed my mind!");
 
-                var result = buydialog.showAndWait();
+            var result = buydialog.showAndWait();
 
-                if (result.isPresent() && !result.get().equals("I changed my mind!")) {
-                    if (game.buyStock(result.get()))
-                        stocksBought++;
-                    else
-                        popupMessage("Failed to buy", "Unable to purchase stock in " + result.get());
-
-                }
-            }
-            else {
-                popupMessage("Invalid action", "You may only buy up to 3 stocks per turn");
+            if (result.isPresent() && !result.get().equals("I changed my mind!")) {
+                if (!game.buyStock(result.get()))
+                    popupMessage("Failed to buy", "Unable to purchase stock in " + result.get());
             }
         });
 
@@ -570,33 +560,32 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyStockDecision(Player player, List<String> fromCorps, String toCorp) {
-        /* TODO: reimplement this with the new system
-        ChoiceDialog<String> stockDecisionDialog = new ChoiceDialog<>();
-        stockDecisionDialog.getItems().addAll("Sell", "Hold Remaining");
+        Set<Player> players = new HashSet<>();
 
-        if (player.stockAmount(fromCorp) >= 2)
-            stockDecisionDialog.getItems().add("Trade 2");
-
-        while(player.stockAmount(fromCorp) > 0) {
-            stockDecisionDialog.setContentText(String.format("Player: %s\nWinner: %s\nLoser: %s\nYou have %d remaining", player.getName(), toCorp, fromCorp, player.stockAmount(fromCorp)));
-            var result = stockDecisionDialog.showAndWait();
-            if (result.isPresent()) {
-                if (result.get().equals("Sell"))
-                    game.sellStock(fromCorp);
-                else if (result.get().equals("Hold Remaining"))
-                    break;
-                else if (result.get().equals("Trade 2"))
-                    game.tradeStock(fromCorp, toCorp);
-            }
+        for(String stock : fromCorps) {
+            List<Player> stockplayers = game.getPlayersWithStock(stock);
+            players.addAll(stockplayers);
         }
-         */
+
+        Node shownode = mainGameRoot;
+        Iterator<Player> iter = players.iterator();
+
+        for(int i = players.size() - 1; i >= 0; i--) {
+            Player p = iter.next();
+            TradePane tradepane = new TradePane(p, fromCorps, toCorp);
+            Node finalShownode = shownode;
+            tradepane.setDoneCallback(() -> { updateScene(finalShownode); });
+            shownode = tradepane;
+        }
+
+        updateScene(shownode);
     }
 
     @Override
-    public void notifyMergeDecision(String option1, String option2, Tile tile) {
+    public void notifyMergeDecision(List<String> options, List<String> goingAway, Tile tile) {
         ChoiceDialog<String> dialog = new ChoiceDialog<>();
         dialog.getDialogPane().setContentText("Which corporation survives the merge?");
-        dialog.getItems().addAll(option1, option2);
+        dialog.getItems().addAll(options);
         var result = dialog.showAndWait();
 
         if (result.isPresent()) {

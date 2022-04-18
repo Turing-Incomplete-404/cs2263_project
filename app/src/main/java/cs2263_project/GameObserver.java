@@ -48,11 +48,11 @@ interface GameObserver {
 
     /**
      * Notifies that a player must make a decision regarding which corporation wins a merger
-     * @param option1 The first corporation
-     * @param option2 The second corporation
+     * @param options The corporations to choose from
+     * @param goingAway The corporations that are definitely losing the merger
      * @param tile The tile that is merging them - choose by calling tile.setCorporation()
      */
-    void notifyMergeDecision(String option1, String option2, Tile tile);
+    void notifyMergeDecision(List<String> options, List<String> goingAway, Tile tile);
 
     /**
      * Notifies that the game is over
