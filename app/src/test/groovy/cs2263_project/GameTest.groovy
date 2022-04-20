@@ -190,7 +190,7 @@ class GameTest extends Specification {
         addAllTiles(game, A1, A2)
 
         when:
-        game.sellStock(corporation)
+        game.sellStock(game.players[game.activePlayer],corporation)
 
         then:
         game.stockList.stocks.get(corporation) == 25
@@ -256,7 +256,7 @@ class GameTest extends Specification {
         player.addStock(GameInfo.Corporations[0],5)
 
         when:
-        game.tradeStock(GameInfo.Corporations[0],GameInfo.Corporations[1])
+        game.tradeStock(game.players[game.activePlayer], GameInfo.Corporations[0],GameInfo.Corporations[1])
 
         then:
         player.stockAmount(GameInfo.Corporations[0]) == 3

@@ -380,7 +380,7 @@ class GameUI implements GameObserver {
             pane.add(btn, i % 3, (i / 3));
 
             btn.setOnAction(e -> {
-                if (game.placeTile(player, tile)) {
+                if (game.placeTile(tile)) {
                     pane.getChildren().removeIf(child -> child.getClass() == Button.class && tile.getTileName().equals(((Button)child).getText()));
                 }
             });
