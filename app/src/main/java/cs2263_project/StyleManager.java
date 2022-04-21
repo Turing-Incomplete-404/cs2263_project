@@ -101,8 +101,8 @@ public class StyleManager {
                         case "BorderColor" -> borderColor.put(name, (String) object.get(paramname));
                         case "BorderThickness" -> borderThickness.put(name, (String) object.get(paramname));
                         case "Font" -> font.put(name, (String) object.get(paramname));
-                        case "Padding" -> padding.put(name, (Integer) object.get(paramname));
-                        case "Spacing" -> spacing.put(name, (Integer) object.get(paramname));
+                        case "Padding" -> padding.put(name, Math.toIntExact((Long) object.get(paramname)));
+                        case "Spacing" -> spacing.put(name, Math.toIntExact((Long) object.get(paramname)));
                         case "Alignment" -> {
                             String align = (String) object.get(paramname);
 
@@ -160,6 +160,7 @@ public class StyleManager {
 
         registeredControls.get(type).add(control);
         control.setStyle(getStyle(type));
+        setOtherParams(control, type);
     }
 
     /**
@@ -210,8 +211,12 @@ public class StyleManager {
 
     private static void callMethod(Node node, String name, Object... params) {
         Class<?>[] classes = new Class<?>[params.length];
-        for(int i = 0; i < params.length; i++)
-            classes[i] = params[i].getClass();
+        for(int i = 0; i < params.length; i++) {
+            if (params[i].getClass() == Double.class)
+                classes[i] = double.class;
+            else
+                classes[i] = params[i].getClass();
+        }
 
         try {
             Method method = node.getClass().getMethod(name, classes);
@@ -225,6 +230,32 @@ public class StyleManager {
         }
     }
 
+    private static void setOtherParams(Node control, String type) {
+        if (padding.containsKey(type))
+            callMethod(control, "setPadding", new Insets(padding.get(type)));
+
+        if (sizes.containsKey(type)) {
+            double width = sizes.get(type).value1();
+            double height = sizes.get(type).value2();
+            callMethod(control, "setPrefSize", width, height);
+        }
+
+        if (alignment.containsKey(type))
+            callMethod(control, "setAlignment", alignment.get(type));
+
+        if (spacing.containsKey(type)) {
+            double space = spacing.get(type);
+
+            if (hasMethod(control, "setSpacing", double.class)) {
+                callMethod(control, "setSpacing", space);
+            }
+            else if (hasMethod(control, "setVgap", double.class) && hasMethod(control, "setHgap", double.class)) {
+                callMethod(control, "setVgap", space);
+                callMethod(control, "setHgap", space);
+            }
+        }
+    }
+
     /**
      * Load a style file to be applied to all the controls
      * @param styleFilePath the path to the file
@@ -235,30 +266,7 @@ public class StyleManager {
         for(String type : registeredControls.keySet()) {
             for(Node control : registeredControls.get(type)) {
                 control.setStyle(getStyle(type));
-
-                if (padding.containsKey(type))
-                    callMethod(control, "setPadding", new Insets(padding.get(type)));
-
-                if (sizes.containsKey(type)) {
-                    double width = sizes.get(type).value1();
-                    double height = sizes.get(type).value2();
-                    callMethod(control, "setPrefSize", width, height);
-                }
-
-                if (alignment.containsKey(type))
-                    callMethod(control, "setAlignment", alignment.get(type));
-
-                if (spacing.containsKey(type)) {
-                    double space = spacing.get(type);
-
-                    if (hasMethod(control, "setSpacing", double.class)) {
-                        callMethod(control, "setSpacing", space);
-                    }
-                    else if (hasMethod(control, "setVgap", double.class) && hasMethod(control, "setHgap", double.class)) {
-                        callMethod(control, "setVgap", space);
-                        callMethod(control, "setHgap", space);
-                    }
-                }
+                setOtherParams(control, type);
             }
         }
     }
