@@ -225,10 +225,13 @@ class GameUI implements GameObserver {
         controls.setAlignment(Pos.CENTER);
         controls.setPadding(new Insets(10, 100, 10, 100));
         controls.setSpacing(25);
+        StyleManager.registerControl("MenuPane", menuRoot);
+        StyleManager.registerControl("MenuCenterPane", controls);
 
         Button save = new Button("Save");
         Button quit = new Button("Quit");
         Button back = new Button("Back");
+        StyleManager.registerControls("MenuButton", save, quit, back);
 
         save.setOnAction(e -> {
             FileChooser chooser = new FileChooser();
@@ -281,7 +284,7 @@ class GameUI implements GameObserver {
      */
     private BorderPane addGameTop() {
         BorderPane topbox = new BorderPane();
-        StyleManager.registerControl("GameTopPanel", topbox);
+        StyleManager.registerControl("GameTopPane", topbox);
         HBox lefttopbox = new HBox();
         HBox centertopbox = new HBox();
         HBox righttopbox = new HBox();
@@ -297,7 +300,9 @@ class GameUI implements GameObserver {
         Button menu = new Button();
         StyleManager.registerControl("GameTopButton", menu);
         menu.setText("Menu");
-        menu.setOnAction(e -> updateScene(menuRoot));
+        menu.setOnAction(e -> {
+            updateScene(menuRoot);
+        });
 
         lefttopbox.getChildren().add(lblPlayerTurn);
         centertopbox.getChildren().add(lblGamePhase);
@@ -626,7 +631,6 @@ class GameUI implements GameObserver {
         winScreen.setBottom(buttonHolder);
 
         updateScene(winScreen);
-        StyleManager.debugdump();
     }
 
     @Override

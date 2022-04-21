@@ -1,28 +1,29 @@
 {
   "GameBoardPane": {
     "Padding" : 20,
-    "Spacing" : 20,
-    "Alignment" : "Center"
-  },
-  "GameRightHeader": {
-    "Font": "18 sansserif"
+    "Spacing" : 10,
+    "Alignment" : "Center",
+    "BorderThickness": "2",
+    "BorderColor": "#000"
   },
   "GameBoardTileEmpty": {
-    "BorderThickness" : "5 5 5 5",
+    "BorderThickness" : "1",
     "BorderColor": "#000000",
     "Alignment": "Center",
-    "Size": 40.0
+    "Size": 30
   },
   "GameBoardFilledTile": {
     "BackgroundColor" : "#ABABAB",
     "BorderColor" : "#000000",
-    "BorderThickness" : "5 5 5 5",
+    "BorderThickness" : "1",
     "Font" : "12 serif",
     "Alignment": "Center"
   },
   "GameBoardFilledTile0": {
-    "BorderThickness" : "5 5 5 5",
-    "BorderColor": "#000000",
+    "BackgroundColor" : "#FF5521",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
     "Alignment": "Center"
   },
   "GameBoardFilledTile1": {},
@@ -31,18 +32,21 @@
   "GameBoardFilledTile4": {},
   "GameBoardFilledTile5": {},
   "GameBoardFilledTile6": {},
-  "GameRightCorporationPane": {},
-  "GameBottomPaneAction": {},
-  "GameRightPane": {},
+  "GameRightPane": {
+    "Padding": 10,
+    "Spacing": 5,
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameRightHeader": {
+    "Font": "18 'sansserif' "
+  },
   "GameRightText": {},
-  "GameBottomPaneTiles": {},
-  "GameLeftHeader": {},
-  "GameBottomButtonAction": {},
-  "GameTopButton": {},
+  "GameRightCorporationPane": {
+    "Spacing": 5
+  },
   "GameRightCorporationLegend0": {
-    "BackgroundColor" : "#ABABAB",
-    "BorderColor" : "#000000",
-    "BorderThickness" : "5 5 5 5"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend1": {},
   "GameRightCorporationLegend2": {},
@@ -50,13 +54,44 @@
   "GameRightCorporationLegend4": {},
   "GameRightCorporationLegend5": {},
   "GameRightCorporationLegend6": {},
-  "GameLeftPane": {},
-  "GameBottomGridButtonTile": {},
-  "GameTopPanel": {},
-  "GameTopHeader": {},
-  "GameBottomButtonTile": {},
-  "GameBottomButtonTileUnplaceable": {},
+  "GameLeftPane": {
+    "Padding": 10,
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameLeftHeader": {},
   "GameLeftText": {},
+  "GameTopButton": {},
+  "GameTopPane": {
+    "Padding": 10,
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameTopHeader": {},
+  "GameBottomPaneTiles": {
+    "Padding": 10
+  },
+  "GameBottomPaneAction": {
+    "Padding": 10,
+    "Spacing": 10
+  },
+  "GameBottomButtonAction": {},
+  "GameBottomGridButtonTile": {
+    "Spacing": 10
+  },
+  "GameBottomButtonTile": {
+    "Size": 50
+  },
+  "GameBottomButtonTileUnplaceable": {
+    "Background": "#FF0000",
+    "Size": 50
+  },
+  "GameBottomButtonTileUnplayable": {
+    "Background": "#FF0000",
+    "Size": 50
+  },
   "TradePane" : {},
   "TradeHeaderPlayer" : {
     "Alignment": "Center"
@@ -71,5 +106,76 @@
   "TradeButton" : {},
   "TradeButtonDone" : {
     "Alignment": "Center"
-  }
+  },
+  "MenuPane" : {},
+  "MenuButton" : {},
+  "MenuCenterPane" : {},
+  "StartTopPane" : {
+    "BackgroundColor": "#00A2E8",
+    "Spacing": 10,
+    "Padding": [15, 5, 0, 5],
+    "Alignment": "Center"
+  },
+  "StartTopTitlePane" : {
+    "BackgroundColor": "#FFFFFF",
+    "Spacing": 10,
+    "Padding": [15, 5, 0, 5],
+    "BorderThickness": "5 5 0 5",
+    "BorderColor": "#000",
+    "Alignment": "Center"
+  },
+  "StartTopHeader" : {
+    "Font": "normal bold 40px 'sansserif' "
+  },
+  "StartTopSubheader" : {
+    "Font": "normal bold 16px 'sansserif' "
+  },
+  "StartMenu1CenterPane": {
+    "Padding": [0, 5, 0, 5],
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "3",
+    "BackgroundColor": "#55BED9",
+    "Alignment": "Center"
+  },
+  "StartMenu1CenterColumn": {
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#99D9EA",
+    "Alignment": "Center"
+  },
+  "StartMenu1Button": {
+    "BorderColor": "#000",
+    "BorderThickness": "2",
+    "BorderInset": "3",
+    "Font": "normal bold 28px 'sansserif' "
+  },
+  "StartMenu2Pane": {
+    "Padding": [0, 5, 0, 5],
+    "Spacing": 10,
+    "Alignment": "Center",
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#55BED9"
+  },
+  "StartMenu2Split": {
+    "Padding": 5,
+    "Spacing": 10,
+    "Alignment": "Center",
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#99D9EA"
+  },
+  "StartMenu2NamesColumn": {
+    "Spacing": 10,
+    "Padding": 10
+  },
+  "StartMenu2ControlsColumn": {
+    "Spacing": 10,
+    "Padding": 10
+  },
+  "StartMenu2Text": { },
+  "StartMenu2Button": { },
+  "StartMenu2Dropdown": { }
 }
