@@ -26,6 +26,7 @@ package cs2263_project;
 import com.google.gson.Gson;
 import lombok.NonNull;
 
+import javax.print.DocFlavor;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,8 @@ public class Game {
 
     private int turnPlayer;
     private int activePlayer;
+    private int gamePhase;
+    private int stocksBought;
 
     private Game() { }
 
@@ -73,6 +76,7 @@ public class Game {
         stockList = new StockList(GameInfo.Corporations, GameInfo.STARTING_STOCKS);
         turnPlayer = 0;
         activePlayer = 0;
+        gamePhase = 0;
 
         players = new Player[playerNames.size()];
         for(int i = 0; i < playerNames.size(); i++) {
@@ -120,6 +124,7 @@ public class Game {
         if (observer != null) {
             observer.notifyChangeStocks(stockList.getAllStocks());
             observer.notifyPlayerUpdate(players[turnPlayer]);
+            observer.notifyGamePhaseChanged(gamePhase);
         }
 
     }
@@ -133,10 +138,13 @@ public class Game {
 
         turnPlayer = (turnPlayer + 1) % players.length;
         activePlayer = turnPlayer;
+        gamePhase = 0;
+        stocksBought = 0;
 
-        if (observer != null)
+        if (observer != null) {
             observer.notifyPlayerUpdate(players[activePlayer]);
-
+            observer.notifyGamePhaseChanged(gamePhase);
+        }
     }
 
     /**
@@ -177,30 +185,46 @@ public class Game {
             List<String> options = board.getMergeOptions(tile);
             assert options.size() >= 2;
 
-            int size1 = board.countCorporation(options.get(0));
-            int size2 = board.countCorporation(options.get(1));
+            Integer[] sizes = new Integer[options.size()];
 
-            if (size1 == size2) {
+            Integer maxSize = 0;
+            for (int i = 0; i < options.size(); i++){
+                Integer size = board.countCorporation(options.get(i));
+                sizes[i] = size;
+                if (size > maxSize) maxSize = size;
+            }
+
+            ArrayList<String> mergeChoices = new ArrayList<>();
+            List<String> goingAway = new ArrayList<>();
+            for (int i = 0; i < options.size(); i++){
+                String corp = board.getMergeOptions(tile).get(i);
+                if (board.countCorporation(corp) == maxSize)
+                    mergeChoices.add(corp);
+                else
+                    goingAway.add(corp);
+            }
+
+            if (mergeChoices.size() > 1) {
                 if (observer != null)
-                    observer.notifyMergeDecision(options.get(0), options.get(1), tile);
+                    observer.notifyMergeDecision(mergeChoices, goingAway, tile);
             }
             else {
-                if (size1 > size2)
-                    tile.setCorporation(options.get(0));
-                else
-                    tile.setCorporation(options.get(1));
+                tile.setCorporation(mergeChoices.get(0));
             }
 
             assert tile.getCorporation() != null;
 
             String to = tile.getCorporation();
-            String from = to.equals(options.get(0)) ? options.get(1) : options.get(0);
-
+            goingAway.clear();
+            for(String corp : options) {
+                if (!corp.equals(to))
+                    goingAway.add(corp);
+            }
 
             int start = activePlayer;
             for(int id = activePlayer; id < players.length + start; id++) {
                 if (observer != null)
-                    observer.notifyStockDecision(players[id % players.length], from, to);
+                    observer.notifyStockDecision(players[id % players.length], goingAway, to);
                 activePlayer = (activePlayer + 1) % players.length;
             }
 
@@ -208,19 +232,25 @@ public class Game {
         }
 
         board.placeTile(tile);
+        players[activePlayer].removeTile(tile);
+        gamePhase = 1;
 
-        if (observer != null)
+        if (observer != null) {
             board.forEachTile(signaltile -> observer.notifyTilePlaced(signaltile));
+            observer.notifyPlayerUpdate(players[turnPlayer]);
+            observer.notifyGamePhaseChanged(gamePhase);
+            observer.notifyChangeStocks(stockList.getAllStocks());
+        }
 
         List<String> formedCorporations = board.getCurrentCorporationList();
-        for(String corp : formedCorporations)
+        for(String corp : formedCorporations) {
             if (board.countCorporation(corp) >= 41) {
                 String[] names = new String[players.length];
                 Integer[] dollars = new Integer[players.length];
 
                 Arrays.sort(players);
 
-                for(int i = 0; i < players.length; i++) {
+                for (int i = 0; i < players.length; i++) {
                     names[i] = players[i].getName();
                     dollars[i] = players[i].getDollars();
                 }
@@ -228,7 +258,30 @@ public class Game {
                 observer.notifyGameEnd(names, dollars);
             }
 
+        }
+
         return true;
+    }
+
+    /**
+     * Get the list of currently formed corporations
+     * @return The list of currently formed corporations
+     */
+    public List<String> getCurrentCorporations() {
+        return board.getCurrentCorporationList();
+    }
+
+    /**
+     * Get the current price of a given corporation
+     * @param corp The corporation to check
+     * @return the price of the corporation, or -1 if not formed
+     */
+    public int getCurrentCorporationCost(String corp) {
+        var corps = board.getCurrentCorporationList();
+        if (corps.contains(corp))
+            return gameInfo.getCost(corp, board.countCorporation(corp));
+        else
+            return -1;
     }
 
     /**
@@ -237,6 +290,9 @@ public class Game {
      * @return - success of purchase
      */
     public boolean buyStock(@NonNull String stock) {
+        if (stocksBought >= 3)
+            return false;
+
         int corpSize = board.countCorporation(stock);
 
         if (corpSize == 0)
@@ -256,6 +312,7 @@ public class Game {
             observer.notifyPlayerUpdate(players[activePlayer]);
         }
 
+        stocksBought++;
         return true;
     }
 
@@ -281,15 +338,15 @@ public class Game {
      * Sell a stock from the active player's hand
      * @param stock the corporation to sell stock of
      */
-    public void sellStock(@NonNull String stock) {
-        if (players[activePlayer].stockAmount(stock) <= 0)
+    public void sellStock(Player player, @NonNull String stock) {
+        if (player.stockAmount(stock) <= 0)
             throw new RuntimeException("Player has insufficient stock to sell");
 
-        int price = gameInfo.getCost(stock,board.countCorporation(stock));
+        int price = gameInfo.getCost(stock, board.countCorporation(stock));
 
         if (stockList.isInStock(stock)) {
-            players[activePlayer].subtractStocks(stock,1);
-            players[activePlayer].addDollars(price);
+            player.subtractStocks(stock,1);
+            player.addDollars(price);
             stockList.addStock(stock, 1);
 
             if (observer != null) {
@@ -299,25 +356,35 @@ public class Game {
         }
     }
 
+    public List<Player> getPlayersWithStock(String stock) {
+        List<Player> list = new ArrayList<>();
+        for(Player player : players) {
+            if (player.stockAmount(stock) > 0)
+                list.add(player);
+        }
+
+        return list;
+    }
+
     /**
      * Trades two of a stock from one corporation for one of another
      * @param from The corporation to trade from
      * @param to The corporation to trade to
      */
-    public void tradeStock(@NonNull String from, @NonNull String to) {
-        if (players[activePlayer].stockAmount(from) < 2)
+    public void tradeStock(Player player, @NonNull String from, @NonNull String to) {
+        if (player.stockAmount(from) < 2)
             throw new RuntimeException("Player has insufficient stock to trade");
 
         if (stockList.isInStock(to)) {
-            players[activePlayer].subtractStocks(from, 2);
+            player.subtractStocks(from, 2);
             stockList.addStock(from, 2);
 
-            players[activePlayer].addStock(to, 1);
+            player.addStock(to, 1);
             stockList.subtractStock(to, 1);
 
             if (observer != null) {
                 observer.notifyChangeStocks(stockList.getAllStocks());
-                observer.notifyPlayerUpdate(players[activePlayer]);
+                observer.notifyPlayerUpdate(player);
             }
         }
     }
@@ -330,6 +397,7 @@ public class Game {
         GameInfo gameInfo;
         int turnPlayer;
         int activePlayer;
+        int gamePhase;
     }
 
     /**
@@ -348,6 +416,7 @@ public class Game {
             state.gameInfo = gameInfo;
             state.turnPlayer = turnPlayer;
             state.activePlayer = activePlayer;
+            state.gamePhase = gamePhase;
             new Gson().toJson(state, writer);
             writer.close();
         }
@@ -372,10 +441,12 @@ public class Game {
             gameInfo = state.gameInfo;
             turnPlayer = state.turnPlayer;
             activePlayer = state.activePlayer;
+            gamePhase = state.gamePhase;
 
             if (observer != null) {
                 observer.notifyPlayerUpdate(players[turnPlayer]);
                 observer.notifyChangeStocks(stockList.getAllStocks());
+                observer.notifyGamePhaseChanged(gamePhase);
 
                 board.forEachTile(tile -> observer.notifyTilePlaced(tile));
             }
