@@ -83,8 +83,13 @@ public class StyleManager {
             borderColor.clear();
             borderThickness.clear();
             font.clear();
+            padding.clear();
+            sizes.clear();
+            alignment.clear();
+            spacing.clear();
 
             JSONObject root = (JSONObject) new JSONParser().parse(reader);
+
             for(Object nameobject : root.keySet()) {
                 String name = (String) nameobject;
                 JSONObject object = (JSONObject) root.get(name);
@@ -220,43 +225,6 @@ public class StyleManager {
         }
     }
 
-    private static void tryApplyPadding(Node node, String type) {
-        try {
-            Method padmethod = node.getClass().getMethod("setPadding", Insets.class);
-            padmethod.invoke(node, new Insets(padding.get(type)));
-        }
-        catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Padding applied to element that can't have padding: " + type);
-        }
-        catch (SecurityException | IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException("Unable to apply padding to element: " + type);
-        }
-    }
-
-    private static void tryApplySizing(Node node, String type) {
-        try {
-            Method sizemethod = node.getClass().getMethod("setPrefSize", double.class, double.class);
-            Pair<Double, Double> size = sizes.get(type);
-            sizemethod.invoke(node, size.value1(), size.value2());
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Sizing applied to element that can't have manual sizing: " + type);
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException("Unable to apply sizing to element: " + type);
-        }
-    }
-
-    private static void tryApplyAlignment(Node node, String type) {
-        try {
-            Method alignmethod = node.getClass().getMethod("setAlignment", Pos.class);
-            alignmethod.invoke(node, alignment.get(type));
-        }
-        catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Alignment applied to element that can't have alignment: " + type);
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException("Unable to apply alignment to element: " + type);
-        }
-    }
-
     /**
      * Load a style file to be applied to all the controls
      * @param styleFilePath the path to the file
@@ -291,17 +259,6 @@ public class StyleManager {
                         callMethod(control, "setHgap", space);
                     }
                 }
-
-                /*
-                if (padding.containsKey(type))
-                    tryApplyPadding(control, type);
-
-                if (sizes.containsKey(type))
-                    tryApplySizing(control, type);
-
-                if (alignment.containsKey(type))
-                    tryApplyAlignment(control, type);
-                 */
             }
         }
     }
