@@ -110,4 +110,18 @@ public class GameInfo {
         return -1;
     }
 
+    /**
+     * Get the numeric id of a corporation name
+     * @param corporation the corporation to get the id for
+     * @return the corporation's id, or 0 if not a valid corporation
+     */
+    public static int getCorporationID(String corporation) {
+        for(int i = 0; i < Corporations.length; i++) {
+            if (Corporations[i].equals(corporation))
+                return i;
+        }
+
+        return 0;
+    }
+
 }
