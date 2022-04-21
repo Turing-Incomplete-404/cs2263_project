@@ -1,7 +1,18 @@
 {
-  "GameBoardPane": {},
-  "GameRightHeader": {},
-  "GameBoardTileEmpty": {},
+  "GameBoardPane": {
+    "Padding" : 20,
+    "Spacing" : 20,
+    "Alignment" : "Center"
+  },
+  "GameRightHeader": {
+    "Font": "18 sansserif"
+  },
+  "GameBoardTileEmpty": {
+    "BorderThickness" : "5 5 5 5",
+    "BorderColor": "#000000",
+    "Alignment": "Center",
+    "Size": 40.0
+  },
   "GameBoardFilledTile": {
     "BackgroundColor" : "#ABABAB",
     "BorderColor" : "#000000",
@@ -9,7 +20,11 @@
     "Font" : "12 serif",
     "Alignment": "Center"
   },
-  "GameBoardFilledTile0": {},
+  "GameBoardFilledTile0": {
+    "BorderThickness" : "5 5 5 5",
+    "BorderColor": "#000000",
+    "Alignment": "Center"
+  },
   "GameBoardFilledTile1": {},
   "GameBoardFilledTile2": {},
   "GameBoardFilledTile3": {},
