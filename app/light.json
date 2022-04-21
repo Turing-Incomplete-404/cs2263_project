@@ -56,5 +56,20 @@
   "GameTopHeader": {},
   "GameBottomButtonTile": {},
   "GameBottomButtonTileUnplaceable": {},
-  "GameLeftText": {}
+  "GameLeftText": {},
+  "TradePane" : {},
+  "TradeHeaderPlayer" : {
+    "Alignment": "Center"
+  },
+  "TradeCenterPane" : {},
+  "TradeCorporationName" : {},
+  "TradeCorporationButtonGrid" : {
+    "Alignment": "Center",
+    "Spacing": 10
+  },
+  "TradeText" : {},
+  "TradeButton" : {},
+  "TradeButtonDone" : {
+    "Alignment": "Center"
+  }
 }
