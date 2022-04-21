@@ -31,6 +31,7 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.text.Style;
 import java.io.File;
 import java.util.*;
 
@@ -63,17 +64,18 @@ class GameUI implements GameObserver {
     private BorderPane menuRoot;
 
     /* Hard coded variables to control sizing and spacing */
-    private static final int BOARD_TILE_SPACING = 10;
-    private static final int PANEL_SPACING = 10;
-    private static final int TILE_WIDTH = 30;
-    private static final int TILE_HEIGHT = 30;
+    //private static final int BOARD_TILE_SPACING = 10;
+    //private static final int PANEL_SPACING = 10;
+    //private static final int TILE_WIDTH = 30;
+    //private static final int TILE_HEIGHT = 30;
 
     /* Maps to map control types to jfx css code. Put entries in the static block below */
+    /*
     private static final Map<String, String> fillColors = new HashMap<>();
     private static final Map<String, String> borderColors = new HashMap<>();
     private static final Map<String, String> borderThickness = new HashMap<>();
     private static final Map<String, String> fonts = new HashMap<>();
-
+    */
 
     /* TODO: this stuff needs exported to an external file and read in
      * Control categories: [] indicates an optional addition, while () a mandatory one
@@ -89,6 +91,7 @@ class GameUI implements GameObserver {
      * ButtonTileUnplayable - buttons for tiles that can't ever be played
      * PaneBoard, PaneTitle, PanePlayer, PaneStocks, PaneAction - the background panes
      */
+    /*
     static {
         borderThickness.put("PaneBoard", "15 15 15 15");
         borderColors.put(   "PaneBoard", "#000000");
@@ -146,8 +149,10 @@ class GameUI implements GameObserver {
             fonts.put(name, "12 serif");
         }
     }
+     */
 
     public GameUI(Stage stage) {
+        StyleManager.applyStyle("light.json");
         game = Game.getInstance();
         this.stage = stage;
         root = new BorderPane();
@@ -169,6 +174,7 @@ class GameUI implements GameObserver {
      * @param category the category of control to generate the code for
      * @return the generated jfx css code
      */
+    /*
     private String getStyle(String category) {
         String result = "";
 
@@ -184,6 +190,7 @@ class GameUI implements GameObserver {
 
         return result;
     }
+     */
 
     /**
      * Swap this scene for a different one
@@ -274,8 +281,7 @@ class GameUI implements GameObserver {
      */
     private BorderPane addGameTop() {
         BorderPane topbox = new BorderPane();
-        topbox.setStyle(getStyle("PaneTitle"));
-        topbox.setPadding(new Insets(PANEL_SPACING));
+        StyleManager.registerControl("GameTopPanel", topbox);
         HBox lefttopbox = new HBox();
         HBox centertopbox = new HBox();
         HBox righttopbox = new HBox();
@@ -285,10 +291,11 @@ class GameUI implements GameObserver {
 
         lblPlayerTurn = new Label("Turn: Null");
         lblGamePhase = new Label("Phase: Null");
-        lblPlayerTurn.setStyle(getStyle("GameStatusHeader"));
-        lblGamePhase.setStyle(getStyle("GameStatusHeader"));
+        StyleManager.registerControl("GameTopHeader", lblPlayerTurn);
+        StyleManager.registerControl("GameTopHeader", lblGamePhase);
 
         Button menu = new Button();
+        StyleManager.registerControl("GameTopButton", menu);
         menu.setText("Menu");
         menu.setOnAction(e -> updateScene(menuRoot));
 
@@ -309,11 +316,8 @@ class GameUI implements GameObserver {
      */
     private GridPane addGameCenter() {
         grdTiles = new GridPane();
-        grdTiles.setStyle(getStyle("PaneBoard"));
-        grdTiles.setPadding(new Insets(PANEL_SPACING));
+        StyleManager.registerControl("GameBoardPane", grdTiles);
         tileGrid = new Label[GameBoard.WIDTH][GameBoard.HEIGHT];
-        grdTiles.setHgap(BOARD_TILE_SPACING);
-        grdTiles.setVgap(BOARD_TILE_SPACING);
 
         for (int x = 0; x < GameBoard.WIDTH; x++) {
             for (int y = 0; y < GameBoard.HEIGHT; y++) {
@@ -321,9 +325,7 @@ class GameUI implements GameObserver {
                 letter += y;
 
                 Label label = new Label(Integer.toString(x + 1) + letter);
-                label.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
-                label.setAlignment(Pos.CENTER);
-                label.setStyle(getStyle("EmptyTile"));
+                StyleManager.registerControl("GameBoardTileEmpty", label);
                 grdTiles.getChildren().add(label);
                 GridPane.setRowIndex(label, y);
                 GridPane.setColumnIndex(label, x);
@@ -346,10 +348,8 @@ class GameUI implements GameObserver {
 
         for(int i = 0; i < tiles.size(); i++) {
             Label label = new Label();
-            label.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
-            label.setAlignment(Pos.CENTER);
             label.setText(tiles.get(i).getTileName());
-            label.setStyle(getStyle("EmptyTile"));
+            StyleManager.registerControl("GameBoardTileEmpty", label);
             pane.add(label, i % 3, (i / 3) + 1);
         }
     }
@@ -367,15 +367,13 @@ class GameUI implements GameObserver {
             Tile tile = tiles.get(i);
 
             Button btn = new Button(tile.getTileName());
-            btn.setPrefSize(TILE_WIDTH * 1.5, TILE_HEIGHT * 1.5);
-            btn.setAlignment(Pos.CENTER);
 
             if (!game.isTilePlaceable(tile))
-                btn.setStyle(getStyle("ButtonTileUnplaceable"));
+                StyleManager.registerControl("GameBottomButtonTileUnplaceable", btn);
             else if (game.isTileUnplayable(tile))
-                btn.setStyle(getStyle("ButtonTileUnplayable"));
+                StyleManager.registerControl("GameBottomButtonTileUnplayable", btn);
             else
-                btn.setStyle(getStyle("ButtonTile"));
+                StyleManager.registerControl("GameBottomButtonTile", btn);
 
             pane.add(btn, i % 3, (i / 3));
 
@@ -393,15 +391,14 @@ class GameUI implements GameObserver {
      */
     private VBox addGameLeft() {
         VBox box = new VBox();
-        box.setStyle(getStyle("PanePlayer"));
-        box.setPadding(new Insets(PANEL_SPACING));
+        StyleManager.registerControl("GameLeftPane", box);
         lblPlayerStocks = new HashMap<>();
 
         lblPlayerHandHeader = new Label("Hand: Null");
-        lblPlayerHandHeader.setStyle(getStyle("PlayerInfoHeader"));
+        StyleManager.registerControl("GameLeftHeader", lblPlayerHandHeader);
 
         lblPlayerMoney = new Label("Money: none");
-        lblPlayerMoney.setStyle(getStyle("PlayerInfo"));
+        StyleManager.registerControl("GameLeftText", lblPlayerMoney);
 
         box.getChildren().addAll(lblPlayerHandHeader, lblPlayerMoney);
         box.setSpacing(10);
@@ -432,32 +429,29 @@ class GameUI implements GameObserver {
      */
     private VBox addGameRight() {
         VBox box = new VBox();
-        box.setStyle(getStyle("PaneStocks"));
-        box.setPadding(new Insets(PANEL_SPACING));
-        box.setSpacing(10);
+        StyleManager.registerControl("GameRightPane", box);
         lblStockList = new HashMap<>();
         lblStockPriceList = new HashMap<>();
 
         Label lblCorpStats = new Label("Corporation Stats");
-        lblCorpStats.setStyle(getStyle("CorporationsInfoHeader"));
+        StyleManager.registerControl("GameRightHeader", lblCorpStats);
 
         box.getChildren().add(lblCorpStats);
 
-        for(String corp : GameInfo.Corporations) {
+        for(int i = 0; i < GameInfo.Corporations.length; i++) {
+            String corp = GameInfo.Corporations[i];
             VBox corpbox = new VBox();
+            StyleManager.registerControl("GameRightCorporationPane", corpbox);
 
-            HBox titlebox = new HBox(5);
+            HBox titlebox = new HBox();
             Label colorlabel = new Label("   ");
-            colorlabel.setStyle(getStyle(String.format("CorporationKeyColor%s", corp)));
+            StyleManager.registerControl(String.format("GameRightCorporationLegend%d", i), colorlabel);
 
             Label namelabel = new Label(corp);
-            namelabel.setStyle(getStyle("CorporationsInfo"));
-
             Label countlabel = new Label("    Qty: ???");
-            countlabel.setStyle(getStyle("CorporationsInfo"));
-
             Label costlabel = new Label("    Cost: ???");
-            costlabel.setStyle(getStyle("CorporationsInfo"));
+
+            StyleManager.registerControls("GameRightText", namelabel, countlabel, costlabel);
 
             titlebox.getChildren().addAll(colorlabel, namelabel);
 
@@ -477,12 +471,10 @@ class GameUI implements GameObserver {
      */
     private HBox addGameBottomTileAction() {
         HBox box = new HBox();
-        box.setStyle(getStyle("PaneAction"));
+        StyleManager.registerControl("GameBottomPaneTiles", box);
 
         grdPlayerHandAction = new GridPane();
-        grdPlayerHandAction.setHgap(10);
-        grdPlayerHandAction.setVgap(10);
-        grdPlayerHandAction.setPadding(new Insets(PANEL_SPACING));
+        StyleManager.registerControl("GameBottomGridButtonTile", grdPlayerHandAction);
 
         Label lbl = new Label("Choose a tile to place");
         grdPlayerHandAction.add(lbl, 0, 2);
@@ -512,11 +504,10 @@ class GameUI implements GameObserver {
      */
     private HBox addGameBottomStockAction() {
         HBox box = new HBox();
-        box.setSpacing(20);
-        box.setPadding(new Insets(PANEL_SPACING));
-        box.setStyle(getStyle("PaneAction"));
+        StyleManager.registerControl("GameBottomPaneAction", box);
 
         Button buyStock = new Button("Buy Stock");
+        StyleManager.registerControl("GameBottomButtonAction", buyStock);
 
         ChoiceDialog<String> buydialog = new ChoiceDialog<>();
 
@@ -535,6 +526,7 @@ class GameUI implements GameObserver {
 
 
         Button endTurn = new Button("End Turn");
+        StyleManager.registerControl("GameBottomButtonAction", endTurn);
         endTurn.setOnAction(e -> {
             game.drawTile();
         });
@@ -634,6 +626,7 @@ class GameUI implements GameObserver {
         winScreen.setBottom(buttonHolder);
 
         updateScene(winScreen);
+        StyleManager.debugdump();
     }
 
     @Override
@@ -668,10 +661,14 @@ class GameUI implements GameObserver {
 
     @Override
     public void notifyTilePlaced(Tile tile) {
-        if (tile.getCorporation() != null)
-            tileGrid[tile.getX()][tile.getY()].setStyle(getStyle(String.format("FilledTile%s", tile.getCorporation())));
-        else
-            tileGrid[tile.getX()][tile.getY()].setStyle(getStyle("FilledTile"));
+        if (tile.getCorporation() != null) {
+            String style = String.format("GameBoardFilledTile%d", GameInfo.getCorporationID(tile.getCorporation()));
+            Label control = tileGrid[tile.getX()][tile.getY()];
+            StyleManager.restyleAs(style, control);
+        }
+        else {
+            StyleManager.restyleAs("GameBoardFilledTile", tileGrid[tile.getX()][tile.getY()]);
+        }
     }
 
     @Override
