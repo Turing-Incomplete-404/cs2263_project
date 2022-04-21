@@ -30,6 +30,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
@@ -85,6 +86,10 @@ public class StartUI extends Application {
 
         //scene = new Scene(root, mainWidth, mainHeight);
         scene = new Scene(root);
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.R)
+                StyleManager.refresh();
+        });
 
         stage.setScene(scene);
         stage.show();
