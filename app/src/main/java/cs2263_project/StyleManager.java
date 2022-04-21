@@ -26,6 +26,8 @@ import java.util.Map;
 public class StyleManager {
     record Pair<T, U>(T value1, U value2) { }
 
+    private static String lastValidStyle;
+
     private static Map<String, List<Node>> registeredControls;
 
     private static Map<String, String> fillColor;
@@ -171,13 +173,14 @@ public class StyleManager {
                 }
             }
 
+            lastValidStyle = path;
         }
         catch (FileNotFoundException ex) {
+            applyStyle(lastValidStyle);
             throw new RuntimeException("Can't find style file: " + path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | ParseException e) {
+            applyStyle(lastValidStyle);
+            throw new RuntimeException("Unable to apply style file: " + path);
         }
     }
 
@@ -292,6 +295,13 @@ public class StyleManager {
     }
 
     /**
+     * Reapply the current style
+     */
+    public static void refresh() {
+        applyStyle(lastValidStyle);
+    }
+
+    /**
      * Load a style file to be applied to all the controls
      * @param styleFilePath the path to the file
      */
@@ -305,12 +315,6 @@ public class StyleManager {
                     control.setStyle(getStyle(type));
                 setOtherParams(control, type);
             }
-        }
-    }
-
-    public static void debugdump() {
-        for(String type : registeredControls.keySet()) {
-            System.out.println(type);
         }
     }
 }
