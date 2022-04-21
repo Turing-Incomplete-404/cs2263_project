@@ -24,15 +24,16 @@ import java.util.Map;
  * A utility class used for managing and applying styles to javafx controls
  */
 public class StyleManager {
-    record Pair<T, Y>(T value1, Y value2) { }
+    record Pair<T, U>(T value1, U value2) { }
 
     private static Map<String, List<Node>> registeredControls;
 
     private static Map<String, String> fillColor;
     private static Map<String, String> borderColor;
     private static Map<String, String> borderThickness;
+    private static Map<String, String> borderInset;
     private static Map<String, String> font;
-    private static Map<String, Integer> padding;
+    private static Map<String, Insets> padding;
     private static Map<String, Pair<Double, Double>> sizes;
     private static Map<String, Pos> alignment;
     private static Map<String, Integer> spacing;
@@ -42,6 +43,7 @@ public class StyleManager {
         fillColor = new HashMap<>();
         borderColor = new HashMap<>();
         borderThickness = new HashMap<>();
+        borderInset = new HashMap<>();
         font = new HashMap<>();
         padding = new HashMap<>();
         sizes = new HashMap<>();
@@ -62,11 +64,25 @@ public class StyleManager {
         if (borderColor.containsKey(type))
             result += String.format("-fx-border-color: %s;", borderColor.get(type));
         if (borderThickness.containsKey(type))
-            result += String.format("-fx-border-thickness: %s;", borderThickness.get(type));
+            result += String.format("-fx-border-width: %s;", borderThickness.get(type));
+        if (borderInset.containsKey(type))
+            result += String.format("-fx-border-insets: %s;", borderInset.get(type));
         if (font.containsKey(type))
             result += String.format("-fx-font: %s;", font.get(type));
 
         return result;
+    }
+
+    private static double toDouble(Object json) {
+        if (json.getClass() == Long.class) {
+            return ((Long) json).doubleValue();
+        }
+        else if (json.getClass() == Double.class) {
+            return (Double) json;
+        }
+        else {
+            return 0.0;
+        }
     }
 
     /**
@@ -82,6 +98,7 @@ public class StyleManager {
             fillColor.clear();
             borderColor.clear();
             borderThickness.clear();
+            borderInset.clear();
             font.clear();
             padding.clear();
             sizes.clear();
@@ -100,9 +117,24 @@ public class StyleManager {
                         case "BackgroundColor" -> fillColor.put(name, (String) object.get(paramname));
                         case "BorderColor" -> borderColor.put(name, (String) object.get(paramname));
                         case "BorderThickness" -> borderThickness.put(name, (String) object.get(paramname));
+                        case "BorderInset" -> borderInset.put(name, (String) object.get(paramname));
                         case "Font" -> font.put(name, (String) object.get(paramname));
-                        case "Padding" -> padding.put(name, Math.toIntExact((Long) object.get(paramname)));
                         case "Spacing" -> spacing.put(name, Math.toIntExact((Long) object.get(paramname)));
+                        case "Padding" -> {
+                            Object pad = object.get(paramname);
+                            if (pad.getClass() == Long.class) {
+                                double val = toDouble(pad);
+                                padding.put(name, new Insets(val));
+                            }
+                            else if (pad.getClass() == JSONArray.class) {
+                                JSONArray arr = (JSONArray) pad;
+                                double v1 = toDouble(arr.get(0)); //top
+                                double v2 = toDouble(arr.get(1)); //right
+                                double v3 = toDouble(arr.get(2)); //bottom
+                                double v4 = toDouble(arr.get(3)); //left
+                                padding.put(name, new Insets(v1, v2, v3, v4));
+                            }
+                        }
                         case "Alignment" -> {
                             String align = (String) object.get(paramname);
 
@@ -126,12 +158,12 @@ public class StyleManager {
                             Object sizesetting = object.get(paramname);
                             if (sizesetting.getClass() == JSONArray.class) {
                                 JSONArray arr = (JSONArray) sizesetting;
-                                double v1 = (double) arr.get(0);
-                                double v2 = (double) arr.get(1);
+                                double v1 = toDouble(arr.get(0));
+                                double v2 = toDouble(arr.get(1));
                                 sizes.put(paramname, new Pair<>(v1, v2));
                             }
                             else {
-                                double size = (double) sizesetting;
+                                double size = toDouble(sizesetting);
                                 sizes.put(name, new Pair<>(size, size));
                             }
                         }
@@ -159,7 +191,10 @@ public class StyleManager {
             registeredControls.put(type, new ArrayList<>());
 
         registeredControls.get(type).add(control);
-        control.setStyle(getStyle(type));
+
+        String style = getStyle(type);
+        if (!style.isEmpty())
+            control.setStyle(style);
         setOtherParams(control, type);
     }
 
@@ -232,7 +267,7 @@ public class StyleManager {
 
     private static void setOtherParams(Node control, String type) {
         if (padding.containsKey(type))
-            callMethod(control, "setPadding", new Insets(padding.get(type)));
+            callMethod(control, "setPadding", padding.get(type));
 
         if (sizes.containsKey(type)) {
             double width = sizes.get(type).value1();
@@ -265,7 +300,9 @@ public class StyleManager {
 
         for(String type : registeredControls.keySet()) {
             for(Node control : registeredControls.get(type)) {
-                control.setStyle(getStyle(type));
+                String style  = getStyle(type);
+                if (!style.isEmpty())
+                    control.setStyle(getStyle(type));
                 setOtherParams(control, type);
             }
         }
