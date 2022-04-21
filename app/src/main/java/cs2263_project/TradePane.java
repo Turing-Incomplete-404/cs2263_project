@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import javax.swing.text.Style;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ class TradePane extends BorderPane {
 
 
     public TradePane(Player player, List<String> fromCorps, String toCorp) {
+        StyleManager.registerControl("TradePane", this);
         Game game = Game.getInstance();
         sells = new HashMap<>();
         trades = new HashMap<>();
@@ -72,21 +74,22 @@ class TradePane extends BorderPane {
         }
 
         Label playername = new Label(player.getName());
+        StyleManager.registerControl("TradeHeaderPlayer", playername);
 
         setTop(playername);
-        setAlignment(playername, Pos.CENTER);
 
         VBox center = new VBox();
         setCenter(center);
+        StyleManager.registerControl("TradeCenterPane", center);
 
         for(String corp : remaining.keySet()) {
             VBox corpContainer = new VBox();
             corpContainer.setAlignment(Pos.CENTER);
             Label corpname = new Label(String.format("%s: %d", corp, player.stockAmount(corp)));
             GridPane grd = new GridPane();
-            grd.setHgap(10);
-            grd.setVgap(10);
-            grd.setAlignment(Pos.CENTER);
+
+            StyleManager.registerControl("TradeCorporationName", corpname);
+            StyleManager.registerControl("TradeCorporationButtonGrid", grd);
 
             corpContainer.getChildren().addAll(corpname, grd);
 
@@ -94,12 +97,24 @@ class TradePane extends BorderPane {
             Label lblTrade = new Label("Traded: 0");
             Label lblHold = new Label("Held: 0");
 
+            StyleManager.registerControls("TradeText", lblTrade, lblHold, lblSell);
+
             Button btnSellPlus = new Button("+");
             Button btnSellMin = new Button("-");
             Button btnTradePlus = new Button("+");
             Button btnTradeMin = new Button("-");
             Button btnHoldPlus = new Button("+");
             Button btnHoldMin = new Button("-");
+
+
+            StyleManager.registerControls("TradeButton",
+                    btnSellPlus,
+                    btnSellMin,
+                    btnTradePlus,
+                    btnTradeMin,
+                    btnHoldPlus,
+                    btnHoldMin
+            );
 
             grd.add(lblSell, 0, 0);
             grd.add(btnSellPlus, 1, 0);
@@ -153,6 +168,7 @@ class TradePane extends BorderPane {
         }
 
         Button complete = new Button("Done");
+        StyleManager.registerControl("TradeButtonDone", complete);
 
         complete.setOnAction(e -> {
             for(Integer rem : remaining.values()) {
