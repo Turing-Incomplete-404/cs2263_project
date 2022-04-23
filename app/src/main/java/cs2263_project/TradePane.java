@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 
 import javax.swing.text.Style;
 import java.util.HashMap;
@@ -73,10 +74,14 @@ class TradePane extends BorderPane {
             }
         }
 
-        Label playername = new Label(player.getName());
-        StyleManager.registerControl("TradeHeaderPlayer", playername);
+        VBox tradeHeaderBox = new VBox();
+        Label tradeHeaderLabel = new Label("What do you want to do with the dissolving stock?");
+        Label playerName = new Label(player.getName());
+        StyleManager.registerControl("PlayerName", playerName);
+        StyleManager.registerControl("TradeHeaderBox", tradeHeaderBox);
 
-        setTop(playername);
+        tradeHeaderBox.getChildren().addAll(playerName, tradeHeaderLabel);
+        setTop(tradeHeaderBox);
 
         VBox center = new VBox();
         setCenter(center);

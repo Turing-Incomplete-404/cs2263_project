@@ -157,14 +157,31 @@
     "BackgroundColor": "#FF0000",
     "Size": 50
   },
-  "TradePane" : {},
-  "TradeHeaderPlayer" : {
-    "Alignment": "Center"
+  "TradePane" : {
+    "Padding": 10,
+    "BackgroundColor": "#99D9EA"
   },
-  "TradeCenterPane" : {},
-  "TradeCorporationName" : {},
+  "TradeHeaderBox": {
+    "Alignment": "Center",
+    "Spacing": 10,
+    "Padding": 10,
+    "BackgroundColor": "#55BED9",
+    "BorderThickness": "1",
+    "BorderColor": "#CCC" 
+  },
+  "PlayerName": {
+    "Font": "16 'sansserif' "
+  },
+  "TradeCenterPane" : {
+    "Padding": 10,
+    "Spacing": 10
+  },
+  "TradeCorporationName" : {
+    "Font": "16 'sansserif' "
+  },
   "TradeCorporationButtonGrid" : {
     "Alignment": "Center",
+    "Padding": 10, 
     "Spacing": 10
   },
   "TradeText" : {},
