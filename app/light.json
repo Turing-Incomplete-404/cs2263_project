@@ -260,11 +260,32 @@
   "StartMenu2Text": { },
   "StartMenu2Button": { },
   "StartMenu2Dropdown": { },
-  "WinPane": { },
-  "WinHeader": { },
-  "WinScoreGrid": { },
-  "WinScoreGridHeader": { },
-  "WinScoreText": { },
+  "WinPane": { 
+    "BackgroundColor": "#55BED9"
+  },
+  "WinHeader": { 
+    "Font":"bold 30 'sansserif'"
+  },
+  "WinScoresPane": {
+    "BackgroundColor": "#99D9EA",
+    "BorderThickness": "2",
+    "BorderColor": "#000"
+  },
+  "WinScoreGrid": {
+    "Alignment": "Center",
+    "Spacing": 0
+  },
+  "WinScoreGridHeader": { 
+    "Alignment": "Center",
+    "BackgroundColor":"#00A2E8",
+    "Font": "bold 16 'sansserif' ",
+    "Padding": 10
+  },
+  "WinScoreText": {
+    "Alignment": "Center",
+    "Font": "16 'sansserif' ",
+    "Padding": 10
+  },
   "WinButtonPane": { },
   "WinButton": { }
 }
