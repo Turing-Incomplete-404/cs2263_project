@@ -15,12 +15,14 @@ class GameTest extends Specification {
         @Override
         void notifyPlayerUpdate(Player player) { playerUpdateCalled = true }
         @Override
-        void notifyStockDecision(Player player, String fromCorp, String toCorp) { stockDecisionCalled = true }
+        void notifyStockDecision(Player player, List<String> fromCorps, String toCorp) { stockDecisionCalled = true }
+
         @Override
-        void notifyMergeDecision(String option1, String option2, Tile tile) {
+        void notifyMergeDecision(List<String> options, List<String> goingAway, Tile tile) {
             mergeDecisionCalled = true
-            tile.setCorporation(option1)
+            tile.setCorporation(options.get(0));
         }
+
         @Override
         void notifyGameEnd(String[] names, Integer[] dollars) { gameEndCalled = true }
         @Override
@@ -34,6 +36,11 @@ class GameTest extends Specification {
 
         @Override
         void notifyTilePlaced(Tile tile) {
+
+        }
+
+        @Override
+        void notifyGamePhaseChanged(int phase) {
 
         }
     }
@@ -183,7 +190,7 @@ class GameTest extends Specification {
         addAllTiles(game, A1, A2)
 
         when:
-        game.sellStock(corporation)
+        game.sellStock(game.players[game.activePlayer],corporation)
 
         then:
         game.stockList.stocks.get(corporation) == 25
@@ -249,7 +256,7 @@ class GameTest extends Specification {
         player.addStock(GameInfo.Corporations[0],5)
 
         when:
-        game.tradeStock(GameInfo.Corporations[0],GameInfo.Corporations[1])
+        game.tradeStock(game.players[game.activePlayer], GameInfo.Corporations[0],GameInfo.Corporations[1])
 
         then:
         player.stockAmount(GameInfo.Corporations[0]) == 3

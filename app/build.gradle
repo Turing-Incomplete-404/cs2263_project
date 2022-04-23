@@ -37,6 +37,13 @@ dependencies {
     implementation 'org.testfx:testfx-spock:4.0.15-alpha'
     // https://mvnrepository.com/artifact/org.hamcrest/hamcrest
     testImplementation 'org.hamcrest:hamcrest:2.2'
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly 'org.projectlombok:lombok:0.9.2'
+
+    // https://mvnrepository.com/artifact/de.lars-sh/lombok-annotations
+    implementation 'de.lars-sh:lombok-annotations:1.18.24'
+
 }
 
 jacoco {

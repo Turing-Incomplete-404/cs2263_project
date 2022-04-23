@@ -41,9 +41,9 @@ import java.util.*;
 class GameUI implements GameObserver {
     private final Game game;
 
-    private Stage stage;
+    private final Stage stage;
 
-    private BorderPane root;
+    private final BorderPane root;
 
     private BorderPane mainGameRoot;
     private Label lblPlayerTurn;
@@ -58,12 +58,9 @@ class GameUI implements GameObserver {
     private Label[][] tileGrid;
     private Map<String, Label> lblPlayerStocks;
     private Map<String, Label> lblStockList;
+    private Map<String, Label> lblStockPriceList;
 
     private BorderPane menuRoot;
-
-    private int gamePhase;
-    private int stocksBought;
-    private List<String> currentCorporations;
 
     /* Hard coded variables to control sizing and spacing */
     private static final int BOARD_TILE_SPACING = 10;
@@ -156,8 +153,6 @@ class GameUI implements GameObserver {
         root = new BorderPane();
         constructMenuRoot();
         constructGameRoot();
-        gamePhase = 0;
-        currentCorporations = new ArrayList<>();
         updateScene(mainGameRoot);
     }
 
@@ -211,8 +206,7 @@ class GameUI implements GameObserver {
 
         hbTileAction = addGameBottomTileAction();
         hbStockAction = addGameBottomStockAction();
-        mainGameRoot.setBottom(hbTileAction);
-        lblGamePhase.setText("Phase: Placing tile");
+        lblGamePhase.setText("Phase: Null");
     }
 
     /**
@@ -361,23 +355,6 @@ class GameUI implements GameObserver {
     }
 
     /**
-     * Advance the phase of the game (play a tile / take an action)
-     */
-    private void advancePhase() {
-        gamePhase = (gamePhase + 1) % 2;
-
-        if (gamePhase == 0) {
-            mainGameRoot.setBottom(hbTileAction);
-            lblGamePhase.setText("Phase: Placing tile");
-            stocksBought = 0;
-        }
-        else {
-            mainGameRoot.setBottom(hbStockAction);
-            lblGamePhase.setText("Phase: Taking action");
-        }
-    }
-
-    /**
      * Utility method - add the tiles of a players hand to a gridpane as buttons that play the tiles
      * @param pane the pane to add to
      * @param player the player to read the hand of
@@ -405,8 +382,6 @@ class GameUI implements GameObserver {
             btn.setOnAction(e -> {
                 if (game.placeTile(tile)) {
                     pane.getChildren().removeIf(child -> child.getClass() == Button.class && tile.getTileName().equals(((Button)child).getText()));
-                    player.removeTile(tile);
-                    advancePhase();
                 }
             });
         }
@@ -461,6 +436,7 @@ class GameUI implements GameObserver {
         box.setPadding(new Insets(PANEL_SPACING));
         box.setSpacing(10);
         lblStockList = new HashMap<>();
+        lblStockPriceList = new HashMap<>();
 
         Label lblCorpStats = new Label("Corporation Stats");
         lblCorpStats.setStyle(getStyle("CorporationsInfoHeader"));
@@ -468,17 +444,28 @@ class GameUI implements GameObserver {
         box.getChildren().add(lblCorpStats);
 
         for(String corp : GameInfo.Corporations) {
+            VBox corpbox = new VBox();
+
             HBox titlebox = new HBox(5);
             Label colorlabel = new Label("   ");
             colorlabel.setStyle(getStyle(String.format("CorporationKeyColor%s", corp)));
 
-            Label namelabel = new Label(corp + ": ???");
+            Label namelabel = new Label(corp);
             namelabel.setStyle(getStyle("CorporationsInfo"));
+
+            Label countlabel = new Label("    Qty: ???");
+            countlabel.setStyle(getStyle("CorporationsInfo"));
+
+            Label costlabel = new Label("    Cost: ???");
+            costlabel.setStyle(getStyle("CorporationsInfo"));
 
             titlebox.getChildren().addAll(colorlabel, namelabel);
 
-            box.getChildren().add(titlebox);
-            lblStockList.put(corp, namelabel);
+            corpbox.getChildren().addAll(titlebox, countlabel, costlabel);
+
+            box.getChildren().add(corpbox);
+            lblStockList.put(corp, countlabel);
+            lblStockPriceList.put(corp, costlabel);
         }
 
         return box;
@@ -534,30 +521,21 @@ class GameUI implements GameObserver {
         ChoiceDialog<String> buydialog = new ChoiceDialog<>();
 
         buyStock.setOnAction(e -> {
-            if (stocksBought < 3) {
-                buydialog.getItems().clear();
-                buydialog.getItems().addAll(currentCorporations);
-                buydialog.getItems().add("I changed my mind!");
+            buydialog.getItems().clear();
+            buydialog.getItems().addAll(game.getCurrentCorporations());
+            buydialog.getItems().add("I changed my mind!");
 
-                var result = buydialog.showAndWait();
+            var result = buydialog.showAndWait();
 
-                if (result.isPresent() && !result.get().equals("I changed my mind!")) {
-                    if (game.buyStock(result.get()))
-                        stocksBought++;
-                    else
-                        popupMessage("Failed to buy", "Unable to purchase stock in " + result.get());
-
-                }
-            }
-            else {
-                popupMessage("Invalid action", "You may only buy up to 3 stocks per turn");
+            if (result.isPresent() && !result.get().equals("I changed my mind!")) {
+                if (!game.buyStock(result.get()))
+                    popupMessage("Failed to buy", "Unable to purchase stock in " + result.get());
             }
         });
 
 
         Button endTurn = new Button("End Turn");
         endTurn.setOnAction(e -> {
-            advancePhase();
             game.drawTile();
         });
 
@@ -581,40 +559,38 @@ class GameUI implements GameObserver {
     }
 
     @Override
-    public void notifyStockDecision(Player player, String fromCorp, String toCorp) {
-        ChoiceDialog<String> stockDecisionDialog = new ChoiceDialog<>();
-        stockDecisionDialog.getItems().addAll("Sell", "Hold Remaining");
+    public void notifyStockDecision(Player player, List<String> fromCorps, String toCorp) {
+        Set<Player> players = new HashSet<>();
 
-        if (player.stockAmount(fromCorp) >= 2)
-            stockDecisionDialog.getItems().add("Trade 2");
-
-        while(player.stockAmount(fromCorp) > 0) {
-            stockDecisionDialog.setContentText(String.format("Player: %s\nWinner: %s\nLoser: %s\nYou have %d remaining", player.getName(), toCorp, fromCorp, player.stockAmount(fromCorp)));
-            var result = stockDecisionDialog.showAndWait();
-            if (result.isPresent()) {
-                if (result.get().equals("Sell"))
-                    game.sellStock(fromCorp);
-                else if (result.get().equals("Hold Remaining"))
-                    break;
-                else if (result.get().equals("Trade 2"))
-                    game.tradeStock(fromCorp, toCorp);
-            }
+        for(String stock : fromCorps) {
+            List<Player> stockplayers = game.getPlayersWithStock(stock);
+            players.addAll(stockplayers);
         }
+
+        Node shownode = mainGameRoot;
+        Iterator<Player> iter = players.iterator();
+
+        for(int i = players.size() - 1; i >= 0; i--) {
+            Player p = iter.next();
+            TradePane tradepane = new TradePane(p, fromCorps, toCorp);
+            Node finalShownode = shownode;
+            tradepane.setDoneCallback(() -> { updateScene(finalShownode); });
+            shownode = tradepane;
+        }
+
+        updateScene(shownode);
     }
 
     @Override
-    public void notifyMergeDecision(String option1, String option2, Tile tile) {
+    public void notifyMergeDecision(List<String> options, List<String> goingAway, Tile tile) {
         ChoiceDialog<String> dialog = new ChoiceDialog<>();
         dialog.getDialogPane().setContentText("Which corporation survives the merge?");
-        dialog.getItems().addAll(option1, option2);
+        dialog.getItems().addAll(options);
         var result = dialog.showAndWait();
 
         if (result.isPresent()) {
             String win = result.get();
             tile.setCorporation(win);
-            String toRemove = win.equals(option1) ? option2 : option1;
-
-            currentCorporations.remove(toRemove);
         }
     }
 
@@ -663,7 +639,15 @@ class GameUI implements GameObserver {
     @Override
     public void notifyChangeStocks(Map<String, Integer> param) {
         for(String corp : param.keySet()) {
-            lblStockList.get(corp).setText(String.format("%s: %d", corp, param.get(corp)));
+            lblStockList.get(corp).setText(String.format("    QTY: %d", param.get(corp)));
+
+            int cost = game.getCurrentCorporationCost(corp);
+            if (cost == -1) {
+                lblStockPriceList.get(corp).setText("    Cost: N/A");
+            }
+            else {
+                lblStockPriceList.get(corp).setText(String.format("    Cost: $%d", game.getCurrentCorporationCost(corp)));
+            }
         }
     }
 
@@ -679,7 +663,6 @@ class GameUI implements GameObserver {
         if (result.isPresent()) {
             String win = result.get();
             tile.setCorporation(win);
-            currentCorporations.add(win);
         }
     }
 
@@ -691,5 +674,15 @@ class GameUI implements GameObserver {
             tileGrid[tile.getX()][tile.getY()].setStyle(getStyle("FilledTile"));
     }
 
-
+    @Override
+    public void notifyGamePhaseChanged(int phase) {
+        if (phase == 0) {
+            mainGameRoot.setBottom(hbTileAction);
+            lblGamePhase.setText("Game Phase: Placing tile");
+        }
+        else {
+            mainGameRoot.setBottom(hbStockAction);
+            lblGamePhase.setText("Game Phase: Taking action");
+        }
+    }
 }
