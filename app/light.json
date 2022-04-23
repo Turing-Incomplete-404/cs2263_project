@@ -22,18 +22,54 @@
     "Alignment": "Center"
   },
   "GameBoardFilledTile0": {
-    "BackgroundColor" : "#FF5521",
+    "BackgroundColor" : "#FFFFD1",
     "BorderColor" : "#000000",
     "BorderThickness" : "1",
     "Font" : "12 serif",
     "Alignment": "Center"
   },
-  "GameBoardFilledTile1": {},
-  "GameBoardFilledTile2": {},
-  "GameBoardFilledTile3": {},
-  "GameBoardFilledTile4": {},
-  "GameBoardFilledTile5": {},
-  "GameBoardFilledTile6": {},
+  "GameBoardFilledTile1": {
+    "BackgroundColor" : "#B5B9FF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile2": {
+    "BackgroundColor" : "#BFFCC6",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile3": {
+    "BackgroundColor" : "#FFC9DE",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile4": {
+    "BackgroundColor" : "#B28DFF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile5": {
+    "BackgroundColor" : "#6EB5FF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile6": {
+    "BackgroundColor" : "#C4FAF8",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
   "GameRightPane": {
     "Padding": 10,
     "Spacing": 1,
