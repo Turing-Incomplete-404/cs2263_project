@@ -120,7 +120,9 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table-tab1 method-summary-table-tab4 method-summary-table">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Player.html" title="class in cs2263_project">Player</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#getPlayersWithStock(java.lang.String)">getPlayersWithStock</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;stock)</code></div>
-<div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
+<div class="block">This method is just used to query what players have at least one of a certain stock</div>
+</div>
 <div class="col-first even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#isTilePlaceable(cs2263_project.Tile)">isTilePlaceable</a></span>&#8203;(@NonNull <a href="Tile.html" title="class in cs2263_project">Tile</a>&nbsp;tile)</code></div>
 <div class="col-last even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
@@ -303,6 +305,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Sell a stock from the active player's hand</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>player</code> - the player selling stock</dd>
 <dd><code>stock</code> - the corporation to sell stock of</dd>
 </dl>
 </section>
@@ -311,6 +314,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getPlayersWithStock(java.lang.String)">
 <h3>getPlayersWithStock</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Player.html" title="class in cs2263_project">Player</a>&gt;</span>&nbsp;<span class="element-name">getPlayersWithStock</span>&#8203;<span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;stock)</span></div>
+<div class="block">This method is just used to query what players have at least one of a certain stock</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>stock</code> - the stock that we are querying the players for</dd>
+<dt>Returns:</dt>
+<dd>list of players that have at least one of that stock</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -324,6 +334,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Trades two of a stock from one corporation for one of another</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>player</code> - the player selling the stock</dd>
 <dd><code>from</code> - The corporation to trade from</dd>
 <dd><code>to</code> - The corporation to trade to</dd>
 </dl>
