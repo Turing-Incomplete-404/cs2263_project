@@ -30,12 +30,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.scene.text.Text;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -60,7 +61,9 @@ public class StartUI extends Application {
 
     private List<TextField> playerNameFields;
 
-
+    /**
+     * Constructor for the StartUI
+     */
     public StartUI() {
         menuNumber = 1;
         root = new BorderPane();
@@ -86,8 +89,14 @@ public class StartUI extends Application {
 
         //scene = new Scene(root, mainWidth, mainHeight);
         scene = new Scene(root);
-
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.R)
+                StyleManager.refresh();
+        });
+    
         stage.setScene(scene);
+        stage.setX(((Screen.getPrimary().getVisualBounds().getWidth() /2) - (mainWidth /2)));
+        stage.setY(50);
         stage.show();
         stage.setAlwaysOnTop(true);
         stage.setAlwaysOnTop(false);
@@ -110,29 +119,20 @@ public class StartUI extends Application {
     }
 
     private HBox addMenu1Top() {
-        String topColor = "#00A2E8;";
-        String titleBoxColor = "#FFFFFF";
-
         HBox topHBox = new HBox();
-        topHBox.setPadding(new Insets(15, 5, 0, 5)); // Top, Right, Bottom, Left
-        topHBox.setSpacing(10);
-        topHBox.setStyle("-fx-background-color: " + topColor);
-        topHBox.setAlignment(Pos.CENTER);
-
         VBox titleBox = new VBox();
-        titleBox.setPadding(new Insets(15, 5, 0, 5)); // Top, Right, Bottom, Left
-        titleBox.setSpacing(10);
-        titleBox.setStyle("-fx-border-width: 5 5 0 5; -fx-border-color: #000; -fx-background-color: " + titleBoxColor);
-        titleBox.setAlignment(Pos.CENTER);
         titleBox.setPrefSize(mainWidth - (mainWidth * 0.2), mainHeight - (mainHeight * 0.8));
 
         Text gameName = new Text("ACQUIRE");
         Text authors = new Text("By: Team Turing-Incomplete");
-        gameName.setStyle("-fx-font: normal bold 40px 'sansserif' ");
-        authors.setStyle("-fx-font: normal bold 16px 'sansserif' ");
-        
+
         titleBox.getChildren().addAll(gameName, authors);
         topHBox.getChildren().addAll(titleBox);
+
+        StyleManager.registerControl("StartTopPane", topHBox);
+        StyleManager.registerControl("StartTopTitlePane", titleBox);
+        StyleManager.registerControl("StartTopHeader", gameName);
+        StyleManager.registerControl("StartTopSubheader", authors);
 
         return topHBox;
     }
@@ -142,21 +142,17 @@ public class StartUI extends Application {
         String menuColor = "#99D9EA";
 
         HBox centerHBox = new HBox();
-        centerHBox.setPadding(new Insets(0, 5, 0, 5)); // Top, Right, Bottom, Left
-        centerHBox.setSpacing(10);
-        centerHBox.setStyle("-fx-border-color: #000; -fx-border-width: 3;-fx-background-color: " + centerColor);
-        centerHBox.setAlignment(Pos.CENTER);
+
 
         VBox firstMenuBox = new VBox();
-        firstMenuBox.setSpacing(10);
-        firstMenuBox.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
-        firstMenuBox.setAlignment(Pos.CENTER);
         firstMenuBox.setPrefSize(mainWidth - (mainWidth * 0.5), mainHeight - (mainHeight * 0.5));
+
+        StyleManager.registerControl("StartMenu1CenterPane", centerHBox);
+        StyleManager.registerControl("StartMenu1CenterColumn", firstMenuBox);
 
         double buttonWidth = (firstMenuBox.getPrefWidth() - (firstMenuBox.getPrefWidth() * 0.1));
         double buttonHeight = (firstMenuBox.getPrefHeight() - (firstMenuBox.getPrefHeight() * 0.95));
-        String buttonStyle = "-fx-focus-color: transparent;-fx-faint-focus-color: transparent; -fx-border-color: #000; -fx-border-width: 2; -fx-border-insets: 3;-fx-font: normal bold 28px 'sansserif' ";
-        
+
         Button newGameButton = new Button("New Game");
         Button loadGameButton = new Button("Load Game");
         Button exitButton = new Button("Exit");
@@ -164,9 +160,8 @@ public class StartUI extends Application {
         newGameButton.setPrefSize(buttonWidth, buttonHeight);
         loadGameButton.setPrefSize(buttonWidth, buttonHeight);
         exitButton.setPrefSize(buttonWidth, buttonHeight);
-        newGameButton.setStyle(buttonStyle);
-        loadGameButton.setStyle(buttonStyle);
-        exitButton.setStyle(buttonStyle);
+
+        StyleManager.registerControls("StartMenu1Button", newGameButton, loadGameButton, exitButton);
 
         centerHBox.getChildren().add(firstMenuBox);
 
@@ -193,40 +188,36 @@ public class StartUI extends Application {
     }
 
     private HBox addMenu2Center() {
-        String menuColor = "#99D9EA";
-        String centerColor = "#55BED9;";
 
         HBox box = new HBox();
-        box.setPadding(new Insets(0, 5, 0, 5));
-        box.setSpacing(10);
-        box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + centerColor);
-
         HBox split = new HBox();
-        split.setPadding(new Insets(5, 5, 5, 5));
-        split.setSpacing(10);
-        split.setAlignment(Pos.CENTER);
-        split.setStyle("-fx-border-color: #000; -fx-border-width: 0 3 0 3; -fx-background-color: " + menuColor);
 
         box.getChildren().add(split);
 
+        StyleManager.registerControl("StartMenu2Pane", box);
+        StyleManager.registerControl("StartMenu2Split", split);
 
         VBox names = new VBox();
-        names.setSpacing(10);
-
         VBox controls = new VBox();
-        controls.setSpacing(10);
+
+        StyleManager.registerControl("StartMenu2NamesColumn", names);
+        StyleManager.registerControl("StartMenu2ControlsColumn", controls);
 
         Label playerCountlabel = new Label("Number of players");
 
-        Button startGame = new Button("Start");
-        startGame.setOnAction(event -> startGame());
+        StyleManager.registerControl("StartMenu2Text", playerCountlabel);
 
+        Button startGame = new Button("Start");
         Button backMenu = new Button("Back");
+
+        startGame.setOnAction(event -> startGame());
         backMenu.setOnAction(event -> updateScene(menu1));
+
+        StyleManager.registerControls("StartMenu2Button", startGame, backMenu);
 
         ComboBox<Integer> playerCounts = new ComboBox<>();
         playerCounts.getItems().addAll(2, 3, 4, 5, 6);
+        StyleManager.registerControl("StartMenu2Dropdown", playerCounts);
 
         controls.getChildren().addAll(playerCountlabel, playerCounts, startGame, backMenu);
 

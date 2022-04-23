@@ -40,6 +40,9 @@ public class Player implements Comparable<Player> {
     private TreeMap<String, Integer> stocks = new TreeMap<String,Integer>();
     private LinkedList<Tile> hand = new LinkedList<Tile>();
 
+    /**
+     * Empty constructor for serialization
+     */
     public Player(){}
 
     public Player(String n, String[] corporations){

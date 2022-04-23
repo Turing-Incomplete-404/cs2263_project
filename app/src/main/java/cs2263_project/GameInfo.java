@@ -37,6 +37,9 @@ public class GameInfo {
     private static int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
     public static final int STARTING_STOCKS = 25;
 
+    /**
+     * Empty constructor for serialization purposes
+     */
     public GameInfo(){
     }
 
@@ -108,6 +111,20 @@ public class GameInfo {
         if (corpTiers[index] == 2){return tier2Cost[bracket];}
         if (corpTiers[index] == 3){return tier3Cost[bracket];}
         return -1;
+    }
+
+    /**
+     * Get the numeric id of a corporation name
+     * @param corporation the corporation to get the id for
+     * @return the corporation's id, or 0 if not a valid corporation
+     */
+    public static int getCorporationID(String corporation) {
+        for(int i = 0; i < Corporations.length; i++) {
+            if (Corporations[i].equals(corporation))
+                return i;
+        }
+
+        return 0;
     }
 
 }

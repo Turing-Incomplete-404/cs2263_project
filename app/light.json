@@ -1,0 +1,291 @@
+{
+  "GameBoardPane": {
+    "Padding" : 10,
+    "Spacing" : 5,
+    "Alignment" : "Center",
+    "BackgroundColor": "#99D9EA",
+    "BorderThickness": "2",
+    "BorderColor": "#000"
+  },
+  "GameBoardTileEmpty": {
+    "BorderThickness" : "1",
+    "BackgroundColor": "#FFF",
+    "BorderColor": "#000000",
+    "Alignment": "Center",
+    "Size": 30
+  },
+  "GameBoardFilledTile": {
+    "BackgroundColor" : "#ABABAB",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile0": {
+    "BackgroundColor" : "#FFFFD1",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile1": {
+    "BackgroundColor" : "#B5B9FF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile2": {
+    "BackgroundColor" : "#BFFCC6",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile3": {
+    "BackgroundColor" : "#FFC9DE",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile4": {
+    "BackgroundColor" : "#B28DFF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile5": {
+    "BackgroundColor" : "#6EB5FF",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameBoardFilledTile6": {
+    "BackgroundColor" : "#C4FAF8",
+    "BorderColor" : "#000000",
+    "BorderThickness" : "1",
+    "Font" : "12 serif",
+    "Alignment": "Center"
+  },
+  "GameRightPane": {
+    "Padding": 10,
+    "Spacing": 1,
+    "BackgroundColor": "#55BED9",
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameRightHeader": {
+    "Font": "18 'sansserif' "
+  },
+  "GameRightText": {},
+  "GameRightCorporationPane": {
+    "Spacing": 3,
+    "BackgroundColor": "#D6EAE6",
+    "BorderThickness": "1",
+    "BorderColor": "#CCC"
+  },
+  "GameRightCorporationLegendBox": {
+    "BorderThickness": "1",
+    "BorderColor": "#000"
+  },
+  "GameRightCorporationLegend0": {
+    "Spacing": 10,
+    "BackgroundColor" : "#FFFFD1"
+  },
+  "GameRightCorporationLegend1": {
+    "BackgroundColor" : "#B5B9FF"
+  },
+  "GameRightCorporationLegend2": {
+    "BackgroundColor" : "#BFFCC6"
+  },
+  "GameRightCorporationLegend3": {
+    "BackgroundColor" : "#FFC9DE"
+  },
+  "GameRightCorporationLegend4": {
+    "BackgroundColor" : "#B28DFF"
+  },
+  "GameRightCorporationLegend5": {
+    "BackgroundColor" : "#6EB5FF"
+  },
+  "GameRightCorporationLegend6": {
+    "BackgroundColor" : "#C4FAF8"
+  },
+  "GameLeftPane": {
+    "Padding": 10,
+    "Spacing": 10,
+    "BackgroundColor": "#55BED9",
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameLeftHeader": {
+    "Font": "14 'sansserif' "
+  },
+  "GameLeftText": {},
+  "GameTopButton": {},
+  "GameTopPane": {
+    "Padding": 10,
+    "Spacing": 10,
+    "BackgroundColor": "#00A2E8",
+    "BorderColor": "#000",
+    "BorderThickness": "2"
+  },
+  "GameTopHeader": {
+    "Font": "18 'sansserif' "
+  },
+  "GameBottomPaneTiles": {
+    "Padding": 10
+  },
+  "GameBottomPaneAction": {
+    "Padding": 10,
+    "Spacing": 10
+  },
+  "GameBottomButtonAction": {},
+  "GameBottomGridButtonTile": {
+    "Spacing": 10
+  },
+  "GameBottomButtonTile": {
+    "Size": 50
+  },
+  "GameBottomButtonTileUnplaceable": {
+    "BackgroundColor": "#FF0000",
+    "Size": 50
+  },
+  "GameBottomButtonTileUnplayable": {
+    "BackgroundColor": "#FF0000",
+    "Size": 50
+  },
+  "TradePane" : {
+    "Padding": 10,
+    "BackgroundColor": "#99D9EA"
+  },
+  "TradeHeaderBox": {
+    "Alignment": "Center",
+    "Spacing": 10,
+    "Padding": 10,
+    "BackgroundColor": "#55BED9",
+    "BorderThickness": "1",
+    "BorderColor": "#CCC" 
+  },
+  "PlayerName": {
+    "Font": "16 'sansserif' "
+  },
+  "TradeCenterPane" : {
+    "Padding": 10,
+    "Spacing": 10
+  },
+  "TradeCorporationName" : {
+    "Font": "16 'sansserif' "
+  },
+  "TradeCorporationButtonGrid" : {
+    "Alignment": "Center",
+    "Padding": 10, 
+    "Spacing": 10
+  },
+  "TradeText" : {},
+  "TradeButton" : {},
+  "TradeButtonDone" : {
+    "Alignment": "Center"
+  },
+  "MenuPane" : {},
+  "MenuButton" : {},
+  "MenuCenterPane" : {},
+  "StartTopPane" : {
+    "BackgroundColor": "#00A2E8",
+    "Spacing": 10,
+    "Padding": [15, 5, 0, 5],
+    "Alignment": "Center"
+  },
+  "StartTopTitlePane" : {
+    "BackgroundColor": "#FFFFFF",
+    "Spacing": 10,
+    "Padding": [15, 5, 0, 5],
+    "BorderThickness": "5 5 0 5",
+    "BorderColor": "#000",
+    "Alignment": "Center"
+  },
+  "StartTopHeader" : {
+    "Font": "normal bold 40px 'sansserif' "
+  },
+  "StartTopSubheader" : {
+    "Font": "normal bold 16px 'sansserif' "
+  },
+  "StartMenu1CenterPane": {
+    "Padding": [0, 5, 0, 5],
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "3",
+    "BackgroundColor": "#55BED9",
+    "Alignment": "Center"
+  },
+  "StartMenu1CenterColumn": {
+    "Spacing": 10,
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#99D9EA",
+    "Alignment": "Center"
+  },
+  "StartMenu1Button": {
+    "BorderColor": "#000",
+    "BorderThickness": "2",
+    "BorderInset": "3",
+    "Font": "normal bold 28px 'sansserif' "
+  },
+  "StartMenu2Pane": {
+    "Padding": [0, 5, 0, 5],
+    "Spacing": 10,
+    "Alignment": "Center",
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#55BED9"
+  },
+  "StartMenu2Split": {
+    "Padding": 5,
+    "Spacing": 10,
+    "Alignment": "Center",
+    "BorderColor": "#000",
+    "BorderThickness": "0 3 0 3",
+    "BackgroundColor": "#99D9EA"
+  },
+  "StartMenu2NamesColumn": {
+    "Spacing": 10,
+    "Padding": 10
+  },
+  "StartMenu2ControlsColumn": {
+    "Spacing": 10,
+    "Padding": 10
+  },
+  "StartMenu2Text": { },
+  "StartMenu2Button": { },
+  "StartMenu2Dropdown": { },
+  "WinPane": { 
+    "BackgroundColor": "#55BED9"
+  },
+  "WinHeader": { 
+    "Font":"bold 30 'sansserif'"
+  },
+  "WinScoresPane": {
+    "BackgroundColor": "#99D9EA",
+    "BorderThickness": "2",
+    "BorderColor": "#000"
+  },
+  "WinScoreGrid": {
+    "Alignment": "Center",
+    "Spacing": 0
+  },
+  "WinScoreGridHeader": { 
+    "Alignment": "Center",
+    "BackgroundColor":"#00A2E8",
+    "Font": "bold 16 'sansserif' ",
+    "Padding": 10
+  },
+  "WinScoreText": {
+    "Alignment": "Center",
+    "Font": "16 'sansserif' ",
+    "Padding": 10
+  },
+  "WinButtonPane": { },
+  "WinButton": { }
+}
