@@ -609,6 +609,9 @@ class GameUI implements GameObserver {
 
         StyleManager.registerControl("WinHeader", winTitle);
 
+        VBox winScoresPane = new VBox();
+        StyleManager.registerControl("WinScoresPane", winScoresPane);
+
         GridPane scores = new GridPane();
         scores.gridLinesVisibleProperty().setValue(true);
         scores.setVgap(10);
@@ -623,6 +626,7 @@ class GameUI implements GameObserver {
 
         scores.add(playerGridHeader, 0, 0);
         scores.add(scoreGridHeader, 1, 0);
+        winScoresPane.getChildren().addAll(scores);        
 
         for(int i = 0; i < names.length; i++) {
             Label name = new Label(names[i]);
@@ -645,7 +649,7 @@ class GameUI implements GameObserver {
         endGame.setOnAction(e -> Platform.exit());
 
         winScreen.setTop(titlebox);
-        winScreen.setCenter(scores);
+        winScreen.setCenter(winScoresPane);
         winScreen.setBottom(buttonHolder);
 
         updateScene(winScreen);
