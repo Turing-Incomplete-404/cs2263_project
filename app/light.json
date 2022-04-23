@@ -150,11 +150,11 @@
     "Size": 50
   },
   "GameBottomButtonTileUnplaceable": {
-    "Background": "#FF0000",
+    "BackgroundColor": "#FF0000",
     "Size": 50
   },
   "GameBottomButtonTileUnplayable": {
-    "Background": "#FF0000",
+    "BackgroundColor": "#FF0000",
     "Size": 50
   },
   "TradePane" : {},
