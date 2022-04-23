@@ -242,5 +242,12 @@
   },
   "StartMenu2Text": { },
   "StartMenu2Button": { },
-  "StartMenu2Dropdown": { }
+  "StartMenu2Dropdown": { },
+  "WinPane": { },
+  "WinHeader": { },
+  "WinScoreGrid": { },
+  "WinScoreGridHeader": { },
+  "WinScoreText": { },
+  "WinButtonPane": { },
+  "WinButton": { }
 }

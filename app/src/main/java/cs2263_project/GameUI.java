@@ -598,12 +598,16 @@ class GameUI implements GameObserver {
     public void notifyGameEnd(String[] names, Integer[] dollars) {
         BorderPane winScreen = new BorderPane();
 
+
         HBox titlebox = new HBox();
         titlebox.setAlignment(Pos.CENTER);
         titlebox.setPadding(new Insets(30));
+        StyleManager.registerControl("WinPane", winScreen);
 
         Label winTitle = new Label(String.format("%s wins!", names[0]));
         titlebox.getChildren().add(winTitle);
+
+        StyleManager.registerControl("WinHeader", winTitle);
 
         GridPane scores = new GridPane();
         scores.gridLinesVisibleProperty().setValue(true);
@@ -611,20 +615,31 @@ class GameUI implements GameObserver {
         scores.setHgap(50);
         scores.setAlignment(Pos.CENTER);
         scores.setPadding(new Insets(10, 100, 10, 100));
+        StyleManager.registerControl("WinScoreGrid", scores);
 
-        scores.add(new Label("Player"), 0, 0);
-        scores.add(new Label("Score"), 1, 0);
+        Label playerGridHeader = new Label("Player");
+        Label scoreGridHeader = new Label("Score");
+        StyleManager.registerControls("WinScoreGridHeader", playerGridHeader, scoreGridHeader);
+
+        scores.add(playerGridHeader, 0, 0);
+        scores.add(scoreGridHeader, 1, 0);
 
         for(int i = 0; i < names.length; i++) {
-            scores.add(new Label(names[i]), 0, i + 1);
-            scores.add(new Label(String.format("$%d", dollars[i])), 1, i + 1);
+            Label name = new Label(names[i]);
+            Label score = new Label(String.format("$%d", dollars[i]));
+            scores.add(name, 0, i + 1);
+            scores.add(score, 1, i + 1);
+            StyleManager.registerControls("WinScoreText", name, score);
         }
 
         HBox buttonHolder = new HBox();
         buttonHolder.setPadding(new Insets(10, 100, 10, 100));
         buttonHolder.setAlignment(Pos.CENTER);
 
+        StyleManager.registerControls("WinButtonPane", buttonHolder);
+
         Button endGame = new Button("Okay!");
+        StyleManager.registerControl("WinButton", endGame);
         buttonHolder.getChildren().add(endGame);
 
         endGame.setOnAction(e -> Platform.exit());
