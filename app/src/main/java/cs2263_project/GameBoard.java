@@ -42,6 +42,9 @@ public class GameBoard {
     private final Tile[][] board;
     private int currentCorporationCount;
 
+    /**
+     * The constructor of the gameboard
+     */
     public GameBoard() {
         board = new Tile[WIDTH][HEIGHT];
         currentCorporationCount = 0;

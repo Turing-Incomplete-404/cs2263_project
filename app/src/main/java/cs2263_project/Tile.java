@@ -51,6 +51,10 @@ public class Tile {
     public int getX() { return X; }
     public int getY() { return Y; }
 
+    /**
+     * A method for finding what corporation a tile is a part of
+     * @return the corporation string
+     */
     public String getCorporation() { return corporation; }
     public void setCorporation(String corp) {
         corporation = corp;

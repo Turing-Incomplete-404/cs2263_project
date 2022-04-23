@@ -336,6 +336,7 @@ public class Game {
 
     /**
      * Sell a stock from the active player's hand
+     * @param player the player selling stock
      * @param stock the corporation to sell stock of
      */
     public void sellStock(Player player, @NonNull String stock) {
@@ -356,6 +357,11 @@ public class Game {
         }
     }
 
+    /**
+     * This method is just used to query what players have at least one of a certain stock
+     * @param stock the stock that we are querying the players for
+     * @return list of players that have at least one of that stock
+     */
     public List<Player> getPlayersWithStock(String stock) {
         List<Player> list = new ArrayList<>();
         for(Player player : players) {
@@ -368,6 +374,7 @@ public class Game {
 
     /**
      * Trades two of a stock from one corporation for one of another
+     * @param player the player selling the stock
      * @param from The corporation to trade from
      * @param to The corporation to trade to
      */

@@ -37,6 +37,9 @@ public class GameInfo {
     private static int[] tier3Cost = {0,400,500,600,700,800,900,1000,1100,1200};
     public static final int STARTING_STOCKS = 25;
 
+    /**
+     * Empty constructor for serialization purposes
+     */
     public GameInfo(){
     }
 

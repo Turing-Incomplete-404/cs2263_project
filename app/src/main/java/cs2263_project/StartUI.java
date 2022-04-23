@@ -61,7 +61,9 @@ public class StartUI extends Application {
 
     private List<TextField> playerNameFields;
 
-
+    /**
+     * Constructor for the StartUI
+     */
     public StartUI() {
         menuNumber = 1;
         root = new BorderPane();
