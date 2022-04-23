@@ -1,15 +1,13 @@
 {
   "GameBoardPane": {
-    "Padding" : 10,
-    "Spacing" : 5,
+    "Padding" : 20,
+    "Spacing" : 10,
     "Alignment" : "Center",
-    "BackgroundColor": "#99D9EA",
     "BorderThickness": "2",
     "BorderColor": "#000"
   },
   "GameBoardTileEmpty": {
     "BorderThickness" : "1",
-    "BackgroundColor": "#FFF",
     "BorderColor": "#000000",
     "Alignment": "Center",
     "Size": 30
@@ -36,8 +34,7 @@
   "GameBoardFilledTile6": {},
   "GameRightPane": {
     "Padding": 10,
-    "Spacing": 1,
-    "BackgroundColor": "#55BED9",
+    "Spacing": 5,
     "BorderColor": "#000",
     "BorderThickness": "2"
   },
@@ -46,59 +43,46 @@
   },
   "GameRightText": {},
   "GameRightCorporationPane": {
-    "Spacing": 3,
-    "BackgroundColor": "#D6EAE6",
-    "BorderThickness": "1",
-    "BorderColor": "#CCC"
-  },
-  "GameRightCorporationLegendBox": {
-    "BorderThickness": "1",
-    "BorderColor": "#000"
+    "Spacing": 5
   },
   "GameRightCorporationLegend0": {
     "Spacing": 10,
-    "BackgroundColor" : "#FFFFD1"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend1": {
-    "BackgroundColor" : "#B5B9FF"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend2": {
-    "BackgroundColor" : "#BFFCC6"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend3": {
-    "BackgroundColor" : "#FFC9DE"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend4": {
-    "BackgroundColor" : "#B28DFF"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend5": {
-    "BackgroundColor" : "#6EB5FF"
+    "BackgroundColor" : "#FF5521"
   },
   "GameRightCorporationLegend6": {
-    "BackgroundColor" : "#C4FAF8"
+    "BackgroundColor" : "#FF5521"
   },
   "GameLeftPane": {
     "Padding": 10,
     "Spacing": 10,
-    "BackgroundColor": "#55BED9",
     "BorderColor": "#000",
     "BorderThickness": "2"
   },
-  "GameLeftHeader": {
-    "Font": "14 'sansserif' "
-  },
+  "GameLeftHeader": {},
   "GameLeftText": {},
   "GameTopButton": {},
   "GameTopPane": {
     "Padding": 10,
     "Spacing": 10,
-    "BackgroundColor": "#00A2E8",
     "BorderColor": "#000",
     "BorderThickness": "2"
   },
-  "GameTopHeader": {
-    "Font": "18 'sansserif' "
-  },
+  "GameTopHeader": {},
   "GameBottomPaneTiles": {
     "Padding": 10
   },

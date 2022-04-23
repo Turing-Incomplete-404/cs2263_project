@@ -402,7 +402,7 @@ class GameUI implements GameObserver {
         lblPlayerHandHeader = new Label("Hand: Null");
         StyleManager.registerControl("GameLeftHeader", lblPlayerHandHeader);
 
-        lblPlayerMoney = new Label("Money: none");
+        lblPlayerMoney = new Label("Money: $ none");
         StyleManager.registerControl("GameLeftText", lblPlayerMoney);
 
         box.getChildren().addAll(lblPlayerHandHeader, lblPlayerMoney);
@@ -449,16 +449,19 @@ class GameUI implements GameObserver {
             StyleManager.registerControl("GameRightCorporationPane", corpbox);
 
             HBox titlebox = new HBox();
-            Label colorlabel = new Label("   ");
+            VBox borderBox = new VBox();
+            Label colorlabel = new Label("     ");
+            StyleManager.registerControl("GameRightCorporationLegendBox", borderBox);
             StyleManager.registerControl(String.format("GameRightCorporationLegend%d", i), colorlabel);
 
-            Label namelabel = new Label(corp);
-            Label countlabel = new Label("    Qty: ???");
-            Label costlabel = new Label("    Cost: ???");
+            Label namelabel = new Label(" " + corp);
+            Label countlabel = new Label("\tQty: ???");
+            Label costlabel = new Label("\tCost: ???");
 
             StyleManager.registerControls("GameRightText", namelabel, countlabel, costlabel);
 
-            titlebox.getChildren().addAll(colorlabel, namelabel);
+            borderBox.getChildren().addAll(colorlabel);
+            titlebox.getChildren().addAll(borderBox, namelabel);
 
             corpbox.getChildren().addAll(titlebox, countlabel, costlabel);
 
@@ -545,7 +548,7 @@ class GameUI implements GameObserver {
     public void notifyPlayerUpdate(Player player) {
         lblPlayerTurn.setText("Active player: " + player.getName());
         lblPlayerHandHeader.setText(player.getName() + "'s hand");
-        lblPlayerMoney.setText(String.format("Money: %d$", player.getDollars()));
+        lblPlayerMoney.setText(String.format("Money: $%d", player.getDollars()));
 
         for(String corp : GameInfo.Corporations) {
             lblPlayerStocks.get(corp).setText(String.format("%s: %d", corp, player.stockAmount(corp)));
@@ -636,14 +639,14 @@ class GameUI implements GameObserver {
     @Override
     public void notifyChangeStocks(Map<String, Integer> param) {
         for(String corp : param.keySet()) {
-            lblStockList.get(corp).setText(String.format("    QTY: %d", param.get(corp)));
+            lblStockList.get(corp).setText(String.format("\tQTY: %d", param.get(corp)));
 
             int cost = game.getCurrentCorporationCost(corp);
             if (cost == -1) {
-                lblStockPriceList.get(corp).setText("    Cost: N/A");
+                lblStockPriceList.get(corp).setText("\tCost: N/A");
             }
             else {
-                lblStockPriceList.get(corp).setText(String.format("    Cost: $%d", game.getCurrentCorporationCost(corp)));
+                lblStockPriceList.get(corp).setText(String.format("\tCost: $%d", game.getCurrentCorporationCost(corp)));
             }
         }
     }
