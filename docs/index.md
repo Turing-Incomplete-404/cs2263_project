@@ -1,1 +1,1 @@
-[linktext](javadoc/index.html)
+[Javadocs](javadoc/index.html)
