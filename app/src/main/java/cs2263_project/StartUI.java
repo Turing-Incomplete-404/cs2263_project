@@ -33,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.scene.text.Text;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -90,8 +91,10 @@ public class StartUI extends Application {
             if (e.getCode() == KeyCode.R)
                 StyleManager.refresh();
         });
-
+    
         stage.setScene(scene);
+        stage.setX(((Screen.getPrimary().getVisualBounds().getWidth() /2) - (mainWidth /2)));
+        stage.setY(50);
         stage.show();
         stage.setAlwaysOnTop(true);
         stage.setAlwaysOnTop(false);
