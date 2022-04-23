@@ -36,10 +36,10 @@ class TradePane extends BorderPane {
      * @param map the map to increment
      * @param corp the corp to increment for
      */
-    private void increment(Map<String, Integer> map, String corp) {
-        if (remaining.get(corp) > 0) {
-            remaining.put(corp, remaining.get(corp) - 1);
-            map.put(corp, map.get(corp) + 1);
+    private void increment(Map<String, Integer> map, String corp, int amount) {
+        if (remaining.get(corp) >= amount) {
+            remaining.put(corp, remaining.get(corp) - amount);
+            map.put(corp, map.get(corp) + amount);
         }
     }
 
@@ -48,10 +48,10 @@ class TradePane extends BorderPane {
      * @param map the map to decrement
      * @param corp the corp to decrement for
      */
-    private void decrement(Map<String, Integer> map, String corp) {
-        if (map.get(corp) > 0) {
-            remaining.put(corp, remaining.get(corp) + 1);
-            map.put(corp, map.get(corp) - 1);
+    private void decrement(Map<String, Integer> map, String corp, int amount) {
+        if (map.get(corp) >= amount) {
+            remaining.put(corp, remaining.get(corp) + amount);
+            map.put(corp, map.get(corp) - amount);
         }
     }
 
@@ -131,37 +131,37 @@ class TradePane extends BorderPane {
             center.getChildren().add(corpContainer);
 
             btnSellPlus.setOnAction(e -> {
-                increment(sells, corp);
+                increment(sells, corp, 1);
                 lblSell.setText(String.format("Sold: %d", sells.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
 
             btnSellMin.setOnAction(e -> {
-                decrement(sells, corp);
+                decrement(sells, corp, 1);
                 lblSell.setText(String.format("Sold: %d", sells.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
 
             btnTradePlus.setOnAction(e -> {
-                increment(trades, corp);
+                increment(trades, corp, 2);
                 lblTrade.setText(String.format("Traded: %d", trades.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
 
             btnTradeMin.setOnAction(e -> {
-                decrement(trades, corp);
+                decrement(trades, corp, 2);
                 lblTrade.setText(String.format("Traded: %d", trades.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
 
             btnHoldPlus.setOnAction(e -> {
-                increment(holds, corp);
+                increment(holds, corp, 1);
                 lblHold.setText(String.format("Held: %d", holds.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
 
             btnHoldMin.setOnAction(e -> {
-                decrement(holds, corp);
+                decrement(holds, corp, 1);
                 lblHold.setText(String.format("Held: %d", holds.get(corp)));
                 corpname.setText(String.format("%s: %d", corp, remaining.get(corp)));
             });
@@ -182,7 +182,7 @@ class TradePane extends BorderPane {
                 for(int i = 0; i < sells.get(corp); i++)
                     game.sellStock(player, corp);
             for(String trade : trades.keySet())
-                for(int i = 0; i < trades.get(trade); i++)
+                for(int i = 0; i < trades.get(trade) / 2; i++)
                     game.tradeStock(player, trade, toCorp);
 
             if (this.callback != null)
